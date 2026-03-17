@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef } from "react";
-import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, TrendingUp, Calendar, Utensils, TreePine, ShoppingBag, Landmark, Wrench, Wine, Sun, Users, BookOpen, Award, X, Sparkles, ArrowRight, Globe, Info, Zap } from "lucide-react";
+import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, TrendingUp, Calendar, Utensils, TreePine, ShoppingBag, Landmark, Wrench, Wine, Sun, BookOpen, Award, X, Sparkles, Info, Settings, LogOut, User } from "lucide-react";
 
 /* ═══════════════════════════════════════
    CITY DATABASE - cleaned & verified
@@ -7,7 +7,7 @@ import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, Trendin
 const CITIES_DATA = {
   "עפולה": {
     name: "עפולה", nameEn: "Afula",
-    populaֳtion: "68K+", founded: "1925", area: "28 קמ״ר",
+    population: "68K+", founded: "1925", area: "28 קמ״ר",
     emoji: "🌾", gradient: "linear-gradient(135deg, #65a30d, #4d7c0f)",
     photo: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Jezreel_Valley_view.jpg",
     tags: ["טבע", "אוכל", "משפחות"],
@@ -129,10 +129,10 @@ const CATS = {
 
 /* ── Theme ── */
 const T = {
-  bg: "#F8FBFF", pill: "#F3EDE8", surface: "#fff",
-  border: "#E2EBF5", borderLight: "#EDF3FA",
+  bg: "#F0F6FF", pill: "#E8F0FB", surface: "#fff",
+  border: "#D1E3F8", borderLight: "#E4EFFC",
   accent: "#0369A1", accentSoft: "#DBEAFE",
-  text: "#111827", textSoft: "#475569", textMuted: "#94A3B8",
+  text: "#0F172A", textSoft: "#334155", textMuted: "#64748B",
   shadow: "0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.05)",
   hover: "0 8px 32px rgba(0,0,0,.09), 0 2px 6px rgba(0,0,0,.03)",
   star: "#F59E0B",
@@ -234,6 +234,24 @@ function Modal({ p, cat, close, favs, toggle }) {
 const SB_URL = "https://voetrktlczxhmmpohjcj.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvZXRya3RsY3p4aG1tcG9oamNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NTE2OTMsImV4cCI6MjA4OTMyNzY5M30.XDY24UJlbBjMPk570U-6TukhHkTf6zEfz9gFr8M4YBA";
 
+const ERR_MAP = {
+  "email rate limit exceeded": "נשלחו יותר מדי בקשות — נסו שוב בעוד מספר דקות",
+  "user already registered": "כתובת האימייל כבר רשומה במערכת — נסו להתחבר",
+  "invalid login credentials": "אימייל או סיסמה שגויים",
+  "email not confirmed": "יש לאשר את האימייל לפני הכניסה",
+  "password should be at least 6 characters": "הסיסמה חייבת להכיל לפחות 6 תווים",
+  "invalid email": "כתובת אימייל לא תקינה",
+  "signup disabled": "ההרשמה סגורה כרגע",
+};
+
+const toHebErr = (msg = "") => {
+  const lower = msg.toLowerCase();
+  for (const [key, val] of Object.entries(ERR_MAP)) {
+    if (lower.includes(key)) return val;
+  }
+  return "אירעה שגיאה — נסו שוב";
+};
+
 const sbFetch = async (endpoint, body) => {
   const res = await fetch(`${SB_URL}/auth/v1/${endpoint}`, {
     method: "POST",
@@ -241,7 +259,10 @@ const sbFetch = async (endpoint, body) => {
     body: JSON.stringify(body),
   });
   const data = await res.json();
-  if (!res.ok) return { error: data.error_description || data.msg || data.error?.message || data.message || `שגיאה ${res.status}` };
+  if (!res.ok) {
+    const raw = data.error_description || data.msg || data.error?.message || data.message || "";
+    return { error: toHebErr(raw) };
+  }
   return data;
 };
 
@@ -260,7 +281,8 @@ export default function App() {
   const [modal, setModal] = useState(null);
   const [mCat, setMCat] = useState(null);
   const [fOnly, setFOnly] = useState(false);
-  const [page, setPage] = useState("register"); // "register" | "login" | "app"
+  const [page, setPage] = useState("login"); // "register" | "login" | "app"
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [regForm, setRegForm] = useState({ name:"", email:"", phone:"", password:"", city:"עפולה" });
   const [regStep, setRegStep] = useState(0); // 0=form, 1=success
   const [authErr, setAuthErr] = useState("");
@@ -312,7 +334,7 @@ export default function App() {
   }, [places]);
 
   const css = `
-    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
     @keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(10px)}to{opacity:1;transform:none}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
     @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
@@ -331,45 +353,50 @@ export default function App() {
 
   // ─── REGISTRATION PAGE ───
   if (page === "register" || page === "login") return (
-    <div dir="rtl" style={{ fontFamily:"'Heebo',sans-serif",minHeight:"100vh",background:"linear-gradient(135deg, #ff8a5c, #ff6b6b)",display:"flex",alignItems:"center",justifyContent:"center",padding:20 }}>
+    <div dir="rtl" style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:"linear-gradient(135deg, #0284c7, #0369a1)",display:"flex",alignItems:"center",justifyContent:"center",padding:20 }}>
       <style>{css}</style>
-      <div style={{ width:"100%",maxWidth:380,animation:"heroIn .5s ease both" }}>
+      <div style={{ width:"100%",maxWidth:520,animation:"heroIn .5s ease both" }}>
         {regStep === 0 ? (
           <>
-            <div style={{ textAlign:"center",marginBottom:36 }}>
-              <h1 style={{ color:"#fff",fontSize:44,fontWeight:900,margin:"0 0 8px",letterSpacing:"-1.5px",textShadow:"0 2px 16px rgba(0,0,0,.1)" }}>AfulaGo</h1>
-              <p style={{ color:"rgba(255,255,255,.75)",fontSize:14,margin:0 }}>גלו את עפולה</p>
+            <div style={{ textAlign:"center",marginBottom:40 }}>
+              <h1 style={{ color:"#fff",fontSize:56,fontWeight:900,margin:"0 0 10px",letterSpacing:"-2px",textShadow:"0 2px 16px rgba(0,0,0,.1)" }}>AfulaGo</h1>
+              <p style={{ color:"rgba(255,255,255,.75)",fontSize:16,margin:"0 0 10px" }}>גלו את עפולה</p>
+              {regForm.name && (
+                <p style={{ color:"#fff",fontSize:20,fontWeight:700,margin:0,animation:"fadeUp .3s ease both",textShadow:"0 1px 8px rgba(0,0,0,.15)" }}>
+                  שלום {regForm.name} 👋
+                </p>
+              )}
             </div>
 
-            <div style={{ background:"#fff",borderRadius:20,padding:"28px 24px",boxShadow:"0 16px 48px rgba(0,0,0,.1)" }}>
-              <h2 style={{ margin:"0 0 20px",fontSize:20,fontWeight:700,color:"#1A1A1A",textAlign:"center" }}>{page==="login"?"התחברות":"הרשמה"}</h2>
+            <div style={{ background:"#fff",borderRadius:24,padding:"36px 32px",boxShadow:"0 16px 48px rgba(0,0,0,.1)" }}>
+              <h2 style={{ margin:"0 0 24px",fontSize:24,fontWeight:700,color:"#1A1A1A",textAlign:"center" }}>{page==="login"?"התחברות":"הרשמה"}</h2>
 
-              {authErr&&<div style={{ background:"#FEF2F2",borderRadius:10,padding:"8px 12px",marginBottom:14,fontSize:12.5,color:"#DC2626",textAlign:"center" }}>{authErr}</div>}
+              {authErr&&<div style={{ background:"#FEF2F2",borderRadius:10,padding:"10px 14px",marginBottom:16,fontSize:13,color:"#DC2626",textAlign:"center" }}>{authErr}</div>}
 
-              <div style={{ display:"flex",flexDirection:"column",gap:12 }}>
+              <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
                 {page==="register"&&(
-                  <input value={regForm.name} onChange={e=>setRegForm({...regForm,name:e.target.value})} placeholder="שם מלא" style={{ width:"100%",padding:"12px 16px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:12,fontSize:14,fontFamily:"'Heebo'",color:"#1A1A1A",outline:"none",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#ff8a5c"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                  <input value={regForm.name} onChange={e=>setRegForm({...regForm,name:e.target.value})} placeholder="שם מלא" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#0284c7"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
                 )}
-                <input value={regForm.email} onChange={e=>setRegForm({...regForm,email:e.target.value})} placeholder="אימייל" type="email" dir="ltr" style={{ width:"100%",padding:"12px 16px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:12,fontSize:14,fontFamily:"'Heebo'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#ff8a5c"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
-                <input value={regForm.password} onChange={e=>setRegForm({...regForm,password:e.target.value})} placeholder="סיסמה (לפחות 6 תווים)" type="password" dir="ltr" style={{ width:"100%",padding:"12px 16px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:12,fontSize:14,fontFamily:"'Heebo'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#ff8a5c"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                <input value={regForm.email} onChange={e=>setRegForm({...regForm,email:e.target.value})} placeholder="אימייל" type="email" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#0284c7"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                <input value={regForm.password} onChange={e=>setRegForm({...regForm,password:e.target.value})} placeholder="סיסמה (לפחות 6 תווים)" type="password" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#0284c7"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
 
-                <button onClick={page==="login"?handleSignIn:handleSignUp} disabled={authLoading} style={{ width:"100%",padding:"13px",background:"linear-gradient(135deg, #ff8a5c, #ff6b6b)",color:"#fff",border:"none",borderRadius:12,fontSize:15,fontWeight:700,fontFamily:"'Heebo'",cursor:authLoading?"default":"pointer",opacity:authLoading?.6:1,transition:"all .2s",marginTop:2 }}>
+                <button onClick={page==="login"?handleSignIn:handleSignUp} disabled={authLoading} style={{ width:"100%",padding:"16px",background:"linear-gradient(135deg, #0284c7, #0369a1)",color:"#fff",border:"none",borderRadius:14,fontSize:17,fontWeight:700,fontFamily:"'Rubik'",cursor:authLoading?"default":"pointer",opacity:authLoading?.6:1,transition:"all .2s",marginTop:4 }}>
                   {authLoading?"⏳":page==="login"?"התחברות":"הרשמה"}
                 </button>
               </div>
 
-              <div style={{ textAlign:"center",marginTop:18 }}>
-                <button onClick={()=>{setPage(page==="login"?"register":"login");setAuthErr("")}} style={{ background:"none",border:"none",color:"#ff6b6b",fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"'Heebo'" }}>
+              <div style={{ textAlign:"center",marginTop:20 }}>
+                <button onClick={()=>{setPage(page==="login"?"register":"login");setAuthErr("")}} style={{ background:"none",border:"none",color:"#0284c7",fontWeight:600,fontSize:15,cursor:"pointer",fontFamily:"'Rubik'" }}>
                   {page==="login"?"אין חשבון? הרשמה":"יש חשבון? התחברות"}
                 </button>
               </div>
 
-              <div style={{ display:"flex",alignItems:"center",gap:10,margin:"16px 0" }}>
-                <div style={{ flex:1,height:1,background:"#EFEFEF" }}/><span style={{ fontSize:11.5,color:"#B0B0B0" }}>או</span><div style={{ flex:1,height:1,background:"#EFEFEF" }}/>
+              <div style={{ display:"flex",alignItems:"center",gap:10,margin:"20px 0" }}>
+                <div style={{ flex:1,height:1,background:"#EFEFEF" }}/><span style={{ fontSize:13,color:"#B0B0B0" }}>או</span><div style={{ flex:1,height:1,background:"#EFEFEF" }}/>
               </div>
 
-              <button onClick={()=>setPage("app")} style={{ width:"100%",padding:"11px",background:"transparent",color:"#999",border:"1px solid #EFEFEF",borderRadius:12,fontSize:13,fontWeight:500,fontFamily:"'Heebo'",cursor:"pointer",transition:"all .2s" }}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor="#ff8a5c";e.currentTarget.style.color="#ff6b6b"}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#EFEFEF";e.currentTarget.style.color="#999"}}>
+              <button onClick={()=>setPage("app")} style={{ width:"100%",padding:"14px",background:"transparent",color:"#999",border:"1px solid #EFEFEF",borderRadius:14,fontSize:15,fontWeight:500,fontFamily:"'Rubik'",cursor:"pointer",transition:"all .2s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="#38bdf8";e.currentTarget.style.color="#0284c7"}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#EFEFEF";e.currentTarget.style.color="#999"}}>
                 כניסה כאורח
               </button>
             </div>
@@ -379,7 +406,7 @@ export default function App() {
             <span style={{ fontSize:52,display:"block",marginBottom:20 }}>🎉</span>
             <h1 style={{ color:"#fff",fontSize:28,fontWeight:800,margin:"0 0 8px" }}>!ברוכים הבאים</h1>
             <p style={{ color:"rgba(255,255,255,.8)",fontSize:15,margin:"0 0 32px" }}>שלום {regForm.name||"אורח"} 👋</p>
-            <button onClick={()=>setPage("app")} style={{ padding:"13px 40px",background:"#fff",color:"#ff6b6b",border:"none",borderRadius:14,fontSize:15,fontWeight:700,fontFamily:"'Heebo'",cursor:"pointer",boxShadow:"0 8px 24px rgba(0,0,0,.1)" }}>
+            <button onClick={()=>setPage("app")} style={{ padding:"13px 40px",background:"#fff",color:"#0284c7",border:"none",borderRadius:14,fontSize:15,fontWeight:700,fontFamily:"'Rubik'",cursor:"pointer",boxShadow:"0 8px 24px rgba(0,0,0,.1)" }}>
               בואו נתחיל 🚀
             </button>
           </div>
@@ -390,27 +417,67 @@ export default function App() {
 
   // ─── MAIN PAGE ───
   return (
-    <div dir="rtl" style={{ fontFamily:"'Heebo',sans-serif",minHeight:"100vh",background:T.bg }}>
+    <div dir="rtl" style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg }}>
       <style>{css}</style>
       {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog}/>}
 
       {/* ── Hero ── */}
       <div style={{ position:"relative",overflow:"hidden",minHeight:320 }}>
         <img src={cd.photo} alt="" onError={e=>{e.target.style.display="none"}} style={{ position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover" }}/>
-        <div style={{ position:"absolute",inset:0,background:"linear-gradient(135deg, rgba(255,138,92,.82), rgba(255,107,107,.85))" }}/>
+        <div style={{ position:"absolute",inset:0,background:"linear-gradient(135deg, rgba(2,132,199,.88), rgba(3,105,161,.92))" }}/>
 
-        {/* Top bar */}
-        <div style={{ position:"absolute",top:0,left:0,right:0,zIndex:10,padding:"16px 24px" }}>
+        {/* Profile picture */}
+        <div style={{ position:"absolute",top:16,right:16,zIndex:10 }}>
+          <div style={{ width:40,height:40,borderRadius:"50%",border:"2px solid rgba(255,255,255,.7)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.15)" }}>
+            <User size={20} color="#fff"/>
+          </div>
+        </div>
+
+        {/* Favorites button */}
+        <div style={{ position:"absolute",top:16,left:64,zIndex:10 }}>
+          <button onClick={()=>{setFOnly(o=>!o);setSettingsOpen(false);}} style={{ background: fOnly ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
+            onMouseEnter={e=>e.currentTarget.style.background= fOnly ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.35)"}
+            onMouseLeave={e=>e.currentTarget.style.background= fOnly ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.2)"}>
+            <Heart size={18} fill={fOnly ? "#E8613C" : "none"} color={fOnly ? "#E8613C" : "#fff"}/>
+          </button>
+        </div>
+
+        {/* Settings button */}
+        <div style={{ position:"absolute",top:16,left:16,zIndex:10 }}>
+          <button onClick={()=>setSettingsOpen(o=>!o)} style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
+            onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.35)"}
+            onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.2)"}>
+            <Settings size={18} color="#fff"/>
+          </button>
+          {settingsOpen && (
+            <div style={{ position:"absolute",top:48,left:0,background:"#fff",borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.15)",minWidth:200,overflow:"hidden",animation:"modalIn .2s ease" }}>
+              <div style={{ padding:"12px 16px",borderBottom:"1px solid #F1F5F9",display:"flex",alignItems:"center",gap:10 }}>
+                <User size={15} color="#0284c7"/>
+                <span style={{ fontSize:13,fontWeight:700,color:T.text }}>{regForm.name || user?.user_metadata?.name || "אורח"}</span>
+              </div>
+              <button onClick={()=>{setPage("register");setSettingsOpen(false);}} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:"#DC2626",fontFamily:"'Rubik'",fontWeight:600 }}
+                onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
+                onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                <LogOut size={15}/> התנתקות
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Centered content */}
-        <div style={{ position:"relative",zIndex:2,padding:"80px 28px 40px",maxWidth:800,margin:"0 auto",textAlign:"center" }}>
+        <div style={{ position:"relative",zIndex:2,padding:"80px 48px 40px",maxWidth:1200,margin:"0 auto",textAlign:"center" }}>
           <div style={{ animation:"heroIn .7s ease both" }}>
+            <p style={{ color:"rgba(255,255,255,.9)",fontSize:17,fontWeight:600,margin:"0 0 10px",letterSpacing:"0.2px" }}>
+              שלום {regForm.name || user?.user_metadata?.name || "אורח"} 👋
+            </p>
             <h1 style={{ color:"#fff",margin:"0 0 12px",fontSize:"clamp(42px,9vw,68px)",fontWeight:900,textShadow:"0 4px 32px rgba(0,0,0,.3)",letterSpacing:"-1.5px",lineHeight:.95 }}>AfulaGo</h1>
             <p style={{ color:"rgba(255,255,255,.92)",margin:"0 0 16px",fontSize:15,fontWeight:400,maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.6 }}>מסעדות, אטרקציות, בילויים, התנדבות ועוד — הכל על עפולה במקום אחד</p>
-            <div style={{ display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap",marginBottom:28 }}>
-              {[{ic:Users,t:`${cd.population} תושבים`},{ic:Calendar,t:`נוסדה ${cd.founded}`},{ic:MapPin,t:cd.area}].map((x,i)=>(
-                <div key={i} style={{ display:"flex",alignItems:"center",gap:5,color:"rgba(255,255,255,.75)",fontSize:12.5,fontWeight:500 }}><x.ic size={12}/>{x.t}</div>
+            <div style={{ display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",marginBottom:28 }}>
+              {[
+                {ic:Calendar,t:`נוסדה ${cd.founded||"1925"}`},
+                {ic:MapPin, t: cd.area||"28 קמ״ר"}
+              ].map((x,i)=>(
+                <div key={i} style={{ display:"flex",alignItems:"center",gap:7,color:"#fff",fontSize:13,fontWeight:700,background:"rgba(255,255,255,.2)",padding:"8px 18px",borderRadius:30,backdropFilter:"blur(10px)",border:"1.5px solid rgba(255,255,255,.35)",boxShadow:"0 2px 12px rgba(0,0,0,.1)" }}><x.ic size={14}/>{x.t}</div>
               ))}
             </div>
           </div>
@@ -419,7 +486,7 @@ export default function App() {
       </div>
 
 
-      <div style={{ maxWidth:1100,margin:"0 auto",padding:"28px 20px 0" }}>
+      <div style={{ maxWidth:1400,margin:"0 auto",padding:"28px 48px 0" }}>
 
         {trending.length>0&&activeCat==="all"&&!fOnly&&(
           <div style={{ marginBottom:32 }}>
@@ -471,17 +538,21 @@ export default function App() {
                           {sec.items.map((p,i)=>{
                             const cc=CATS[cat]?.color||"#888";
                             const hasImg=p.img;
+                            const f=favs.has(p.name);
                             return(
-                              <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:220,minWidth:220,background:T.surface,borderRadius:14,overflow:"hidden",cursor:"pointer",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all .3s",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
+                              <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.surface,borderRadius:14,overflow:"hidden",cursor:"pointer",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all .3s",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                                 onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=T.hover}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 4px 12px rgba(0,0,0,0.05)"}}>
-                                <div style={{ height:130,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}12, ${cc}06)`,position:"relative",overflow:"hidden" }}>
-                                  {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:42 }}>{p.icon}</span>}
+                                <div style={{ height:160,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}12, ${cc}06)`,position:"relative",overflow:"hidden" }}>
+                                  {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48 }}>{p.icon}</span>}
                                   {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                                   {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
+                                  <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
+                                    <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"}/>
+                                  </button>
                                 </div>
                                 <div style={{ padding:"10px 12px 12px" }}>
-                                  <h3 style={{ margin:"0 0 4px",fontSize:13.5,fontWeight:700,color:T.text,lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</h3>
-                                  <p style={{ margin:0,fontSize:11.5,color:T.textSoft,lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",minHeight:32 }}>{p.desc}</p>
+                                  <h3 style={{ margin:"0 0 4px",fontSize:14,fontWeight:700,color:T.text,lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</h3>
+                                  <p style={{ margin:0,fontSize:12,color:T.textSoft,lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",minHeight:32 }}>{p.desc}</p>
                                 </div>
                               </div>
                             );
@@ -494,17 +565,21 @@ export default function App() {
                     {items.map((p,i)=>{
                       const cc=CATS[cat]?.color||"#888";
                       const hasImg=p.img;
+                      const f=favs.has(p.name);
                       return(
-                        <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:220,minWidth:220,background:T.surface,borderRadius:14,overflow:"hidden",cursor:"pointer",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all .3s",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
+                        <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.surface,borderRadius:14,overflow:"hidden",cursor:"pointer",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all .3s",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                           onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=T.hover}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 4px 12px rgba(0,0,0,0.05)"}}>
-                          <div style={{ height:130,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}12, ${cc}06)`,position:"relative",overflow:"hidden" }}>
-                            {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:42 }}>{p.icon}</span>}
+                          <div style={{ height:160,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}12, ${cc}06)`,position:"relative",overflow:"hidden" }}>
+                            {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48 }}>{p.icon}</span>}
                             {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                             {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
+                            <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
+                              <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"}/>
+                            </button>
                           </div>
                           <div style={{ padding:"10px 12px 12px" }}>
-                            <h3 style={{ margin:"0 0 4px",fontSize:13.5,fontWeight:700,color:T.text,lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</h3>
-                            <p style={{ margin:0,fontSize:11.5,color:T.textSoft,lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",minHeight:32 }}>{p.desc}</p>
+                            <h3 style={{ margin:"0 0 4px",fontSize:14,fontWeight:700,color:T.text,lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</h3>
+                            <p style={{ margin:0,fontSize:12,color:T.textSoft,lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",minHeight:32 }}>{p.desc}</p>
                           </div>
                         </div>
                       );
@@ -520,7 +595,7 @@ export default function App() {
 
       {/* ── About Afula — bottom of page ── */}
       <div style={{ background:"rgba(255,138,92,.05)",padding:"36px 24px",borderTop:`1px solid ${T.border}` }}>
-        <div style={{ maxWidth:800,margin:"0 auto" }}>
+        <div style={{ maxWidth:1400,margin:"0 auto" }}>
           <div style={{ background:T.surface,borderRadius:14,padding:"24px 28px",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)" }}>
             <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14 }}><BookOpen size={18} color={T.accent}/><h2 style={{ margin:0,fontSize:18,fontWeight:800,color:T.text }}>📖 על עפולה</h2></div>
             <p style={{ fontSize:14,color:T.textSoft,lineHeight:1.8,margin:"0 0 18px" }}>{cd.history}</p>
@@ -532,17 +607,18 @@ export default function App() {
             </div>
             <h3 style={{ fontSize:14,fontWeight:700,color:T.text,marginBottom:10,display:"flex",alignItems:"center",gap:6 }}><Award size={14} color={T.accent}/>אתרי חובה</h3>
             <div style={{ display:"flex",flexWrap:"wrap",gap:8 }}>
-              {cd.landmarks.map((l,i)=>(<span key={i} style={{ padding:"5px 14px",background:T.accentSoft,color:"#C2410C",borderRadius:20,fontSize:12.5,fontWeight:700 }}>{l}</span>))}
+              {cd.landmarks.map((l,i)=>(<span key={i} style={{ padding:"5px 14px",background:T.accentSoft,color:"#0369A1",borderRadius:20,fontSize:12.5,fontWeight:700 }}>{l}</span>))}
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{ background:"#2C1810",padding:"36px 24px",textAlign:"center" }}>
+      <div style={{ background:"linear-gradient(135deg, #0284c7, #0369a1)",padding:"36px 24px",textAlign:"center" }}>
         <div style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:6 }}>
-          <span style={{ color:"rgba(255,255,255,.4)",fontSize:14,fontWeight:700,letterSpacing:"-0.3px" }}>AfulaGo</span>
+          <span style={{ color:"rgba(255,255,255,.95)",fontSize:22,fontWeight:800,letterSpacing:"-0.5px" }}>AfulaGo</span>
         </div>
-        <span style={{ color:"rgba(255,255,255,.2)",fontSize:11 }}>בירת העמק • 2026</span>
+        <span style={{ color:"rgba(255,255,255,.65)",fontSize:15 }}>בירת העמק • 2026</span>
+        <p style={{ color:"rgba(255,255,255,.65)",fontSize:15,margin:"8px 0 0" }}>נוצר על ידי בנימין יונה</p>
       </div>
     </div>
   );
