@@ -7,7 +7,7 @@ import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, Trendin
 const CITIES_DATA = {
   "עפולה": {
     name: "עפולה", nameEn: "Afula",
-    population: "68K+", founded: "1925", area: "28 קמ״ר",
+    populaֳtion: "68K+", founded: "1925", area: "28 קמ״ר",
     emoji: "🌾", gradient: "linear-gradient(135deg, #65a30d, #4d7c0f)",
     photo: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Jezreel_Valley_view.jpg",
     tags: ["טבע", "אוכל", "משפחות"],
