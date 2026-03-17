@@ -376,7 +376,7 @@ export default function App() {
         {regStep === 0 ? (
           <>
             <div style={{ textAlign:"center",marginBottom:40 }}>
-              <img src="/logo.png" alt="AfulaGo" style={{ width:160,height:160,objectFit:"contain",marginBottom:8,filter:"drop-shadow(0 4px 24px rgba(0,0,0,.25))",animation:"float 3s ease-in-out infinite" }}/>
+              <img src="/logo.png" alt="AfulaGo" style={{ width:280,height:280,objectFit:"contain",marginBottom:8,filter:"drop-shadow(0 4px 24px rgba(0,0,0,.25))",animation:"float 3s ease-in-out infinite",maskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)" }}/>
               <p style={{ color:"rgba(255,255,255,.75)",fontSize:16,margin:"0 0 10px" }}>גלו את עפולה</p>
               {regForm.name && (
                 <p style={{ color:"#fff",fontSize:20,fontWeight:700,margin:0,animation:"fadeUp .3s ease both",textShadow:"0 1px 8px rgba(0,0,0,.15)" }}>
@@ -506,7 +506,7 @@ export default function App() {
               <span style={{ fontSize:16 }}>👋</span>
               <span style={{ color:"rgba(255,255,255,.95)",fontSize:14,fontWeight:600 }}>שלום {regForm.name || user?.user_metadata?.name || "אורח"}</span>
             </div>
-            <img src="/logo.png" alt="AfulaGo" style={{ width:180,height:180,objectFit:"contain",margin:"0 auto 8px",display:"block",filter:"drop-shadow(0 4px 32px rgba(0,0,0,.3))",animation:"float 3s ease-in-out infinite" }}/>
+            <img src="/logo.png" alt="AfulaGo" style={{ width:320,height:320,objectFit:"contain",margin:"0 auto 8px",display:"block",filter:"drop-shadow(0 4px 32px rgba(0,0,0,.3))",animation:"float 3s ease-in-out infinite",maskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)" }}/>
             <p style={{ color:"rgba(255,255,255,.82)",margin:"0 0 32px",fontSize:16,fontWeight:400,maxWidth:480,marginLeft:"auto",marginRight:"auto",lineHeight:1.7 }}>מסעדות, אטרקציות, בילויים ועוד — הכל על עפולה במקום אחד</p>
 
             {/* Search bar */}
