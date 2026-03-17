@@ -292,6 +292,7 @@ export default function App() {
   const [fOnly, setFOnly] = useState(false);
   const [page, setPage] = useState("login"); // "register" | "login" | "app"
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [editingName, setEditingName] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [profileImg, setProfileImg] = useState(null);
   const profileInputRef = useRef(null);
@@ -335,8 +336,19 @@ export default function App() {
     setAuthLoading(false);
   };
 
+  const [addPlaceOpen, setAddPlaceOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ name:"", desc:"", address:"", phone:"", category:"attractions" });
+  const [customPlaces, setCustomPlaces] = useState({});
+
   const cd = CITIES_DATA[city];
-  const places = generatePlaces(city);
+  const basePlaces = generatePlaces(city);
+  const places = useMemo(() => {
+    const merged = { ...basePlaces };
+    Object.entries(customPlaces).forEach(([cat, items]) => {
+      merged[cat] = [...(merged[cat]||[]), ...items];
+    });
+    return merged;
+  }, [customPlaces]);
 
   const tog = useCallback(n => setFavs(p => { const s = new Set(p); s.has(n)?s.delete(n):s.add(n); return s; }), []);
 
@@ -432,11 +444,55 @@ export default function App() {
     </div>
   );
 
+  const submitPlace = () => {
+    if (!addForm.name.trim()) return;
+    const newPlace = { name:addForm.name, desc:addForm.desc, address:addForm.address, phone:addForm.phone, rating:0, icon:"📍", _custom:true };
+    setCustomPlaces(p => ({ ...p, [addForm.category]: [...(p[addForm.category]||[]), newPlace] }));
+    setAddForm({ name:"", desc:"", address:"", phone:"", category:"attractions" });
+    setAddPlaceOpen(false);
+  };
+
   // ─── MAIN PAGE ───
   return (
     <div dir="rtl" style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s" }}>
       <style>{css}</style>
       {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog} T={T}/>}
+
+      {/* ── Add Place Modal ── */}
+      {addPlaceOpen&&(
+        <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(8px)" }} onClick={()=>setAddPlaceOpen(false)}>
+          <div onClick={e=>e.stopPropagation()} style={{ background:T.surface,borderRadius:20,maxWidth:460,width:"100%",overflow:"hidden",boxShadow:"0 24px 64px rgba(0,0,0,.25)",animation:"modalIn .3s ease" }}>
+            <div style={{ background:"linear-gradient(135deg,#2d7720,#1a6abf)",padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between" }}>
+              <span style={{ color:"#fff",fontSize:18,fontWeight:800 }}>➕ הוספת מקום חדש</span>
+              <button onClick={()=>setAddPlaceOpen(false)} style={{ background:"rgba(255,255,255,.2)",border:"none",borderRadius:"50%",width:32,height:32,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}><X size={16} color="#fff"/></button>
+            </div>
+            <div style={{ padding:24,display:"flex",flexDirection:"column",gap:14 }}>
+              {[
+                { label:"שם המקום *", key:"name", placeholder:"למשל: קפה עמק" },
+                { label:"תיאור", key:"desc", placeholder:"תיאור קצר..." },
+                { label:"כתובת", key:"address", placeholder:"רחוב ומספר, עפולה" },
+                { label:"טלפון", key:"phone", placeholder:"04-XXXXXXX" },
+              ].map(({label,key,placeholder})=>(
+                <div key={key}>
+                  <label style={{ fontSize:13,fontWeight:700,color:T.textSoft,display:"block",marginBottom:5 }}>{label}</label>
+                  <input value={addForm[key]} onChange={e=>setAddForm(f=>({...f,[key]:e.target.value}))} placeholder={placeholder}
+                    style={{ width:"100%",padding:"11px 14px",borderRadius:12,border:`1.5px solid ${T.border}`,fontSize:14,fontFamily:"'Rubik'",color:T.text,background:T.bg,outline:"none",boxSizing:"border-box" }}/>
+                </div>
+              ))}
+              <div>
+                <label style={{ fontSize:13,fontWeight:700,color:T.textSoft,display:"block",marginBottom:5 }}>קטגוריה</label>
+                <select value={addForm.category} onChange={e=>setAddForm(f=>({...f,category:e.target.value}))}
+                  style={{ width:"100%",padding:"11px 14px",borderRadius:12,border:`1.5px solid ${T.border}`,fontSize:14,fontFamily:"'Rubik'",color:T.text,background:T.bg,outline:"none" }}>
+                  {Object.entries(CATS).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </div>
+              <button onClick={submitPlace} style={{ marginTop:4,padding:"13px",borderRadius:14,background:"linear-gradient(135deg,#2d7720,#1a6abf)",border:"none",color:"#fff",fontSize:15,fontWeight:700,fontFamily:"'Rubik'",cursor:"pointer",boxShadow:"0 4px 16px rgba(45,119,32,.3)" }}>
+                שמור מקום
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Hero ── */}
       <div style={{ position:"relative",overflow:"hidden",minHeight:460 }}>
@@ -445,92 +501,98 @@ export default function App() {
         <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 30% 0%, rgba(245,162,0,.15) 0%, transparent 60%)" }}/>
         <div style={{ position:"absolute",bottom:0,left:0,right:0,height:80,background:`linear-gradient(to top, ${T.bg}, transparent)` }}/>
 
-        {/* Profile picture */}
-        <div style={{ position:"absolute",top:16,right:16,zIndex:10 }}>
-          <input ref={profileInputRef} type="file" accept="image/*" style={{ display:"none" }}
-            onChange={e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=ev=>setProfileImg(ev.target.result);r.readAsDataURL(f);}}}/>
-          <div onClick={()=>profileInputRef.current.click()} style={{ position:"relative",width:56,height:56,borderRadius:"50%",border:"2.5px solid rgba(255,255,255,.85)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 12px rgba(0,0,0,.2)",transition:"transform .2s" }}
-            onMouseEnter={e=>e.currentTarget.style.transform="scale(1.07)"}
-            onMouseLeave={e=>e.currentTarget.style.transform=""}>
-            {profileImg
-              ? <img src={profileImg} alt="פרופיל" style={{ width:"100%",height:"100%",objectFit:"cover" }}/>
-              : <User size={26} color="#fff"/>
-            }
-            <div style={{ position:"absolute",bottom:0,right:0,width:18,height:18,background:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 1px 4px rgba(0,0,0,.2)" }}>
-              <Plus size={11} color="#2d7720" strokeWidth={3}/>
+        {/* ── Top bar ── */}
+        <div style={{ position:"absolute",top:0,left:0,right:0,zIndex:10,display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"16px 24px",pointerEvents:"none" }}>
+          {/* Left: Logo + Settings & Favorites below */}
+          <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:10,pointerEvents:"auto" }}>
+            <img src="/logo.png" alt="AfulaGo" style={{ width:130,height:130,objectFit:"cover",borderRadius:"50%",border:"3px solid rgba(255,255,255,.7)",boxShadow:"0 4px 20px rgba(0,0,0,.3)",flexShrink:0 }}/>
+            <div style={{ display:"flex",alignItems:"center",gap:8 }}>
+              <div style={{ position:"relative" }}>
+                <button onClick={()=>setSettingsOpen(o=>!o)} style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
+                  onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.35)"}
+                  onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.2)"}>
+                  <Settings size={18} color="#fff"/>
+                </button>
+                {settingsOpen && (
+                  <div style={{ position:"absolute",top:52,right:0,background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.15)",minWidth:200,overflow:"hidden",animation:"modalIn .2s ease" }}>
+                    <div style={{ padding:"12px 16px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:10 }}>
+                      <User size={15} color="#2d7720"/>
+                      <span style={{ fontSize:13,fontWeight:700,color:T.text }}>{regForm.name || user?.user_metadata?.name || "אורח"}</span>
+                    </div>
+                    <button onClick={()=>setDarkMode(d=>!d)} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:T.text,fontFamily:"'Rubik'",fontWeight:600 }}
+                      onMouseEnter={e=>e.currentTarget.style.background=darkMode?"#1E293B":"#F8FAFC"}
+                      onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                      {darkMode ? <Sun size={15} color="#F59E0B"/> : <Moon size={15} color="#1a6abf"/>}
+                      {darkMode ? "מצב יום" : "מצב לילה"}
+                    </button>
+                    <button onClick={()=>{setPage("register");setSettingsOpen(false);}} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:"#DC2626",fontFamily:"'Rubik'",fontWeight:600 }}
+                      onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
+                      onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                      <LogOut size={15}/> התנתקות
+                    </button>
+                  </div>
+                )}
+              </div>
+              <button onClick={()=>{setFOnly(o=>!o);setSettingsOpen(false);}} style={{ background:fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
+                onMouseEnter={e=>e.currentTarget.style.background=fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.35)"}
+                onMouseLeave={e=>e.currentTarget.style.background=fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.2)"}>
+                <Heart size={18} fill={fOnly?"#E8613C":"none"} color={fOnly?"#E8613C":"#fff"}/>
+              </button>
             </div>
+          </div>
+
+          {/* Right: Profile + greeting below */}
+          <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:10,pointerEvents:"auto" }}>
+            <input ref={profileInputRef} type="file" accept="image/*" style={{ display:"none" }}
+              onChange={e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=ev=>setProfileImg(ev.target.result);r.readAsDataURL(f);}}}/>
+            <div onClick={()=>profileInputRef.current.click()} style={{ position:"relative",width:110,height:110,borderRadius:"50%",border:"3px solid rgba(255,255,255,.8)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(0,0,0,.25)",transition:"transform .2s",flexShrink:0 }}
+              onMouseEnter={e=>e.currentTarget.style.transform="scale(1.07)"}
+              onMouseLeave={e=>e.currentTarget.style.transform=""}>
+              {profileImg ? <img src={profileImg} alt="פרופיל" style={{ width:"100%",height:"100%",objectFit:"cover" }}/> : <User size={44} color="#fff"/>}
+              <div style={{ position:"absolute",bottom:1,right:1,width:18,height:18,background:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center" }}>
+                <Plus size={10} color="#2d7720" strokeWidth={3}/>
+              </div>
+            </div>
+            {editingName ? (
+              <input
+                autoFocus
+                value={regForm.name}
+                onChange={e=>setRegForm(f=>({...f,name:e.target.value}))}
+                onBlur={()=>setEditingName(false)}
+                onKeyDown={e=>e.key==="Enter"&&setEditingName(false)}
+                placeholder="הכנס שם..."
+                style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.5)",borderRadius:30,padding:"6px 16px",fontSize:13,fontWeight:600,color:"#fff",fontFamily:"'Rubik'",outline:"none",textAlign:"center",width:140,backdropFilter:"blur(12px)" }}
+              />
+            ) : (
+              <div onClick={()=>setEditingName(true)} style={{ display:"inline-flex",alignItems:"center",gap:6,background:"rgba(255,255,255,.15)",backdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,.25)",borderRadius:30,padding:"6px 14px",animation:"badgeIn .6s ease both",cursor:"pointer" }}
+                title="לחץ לעריכת שם">
+                <span style={{ fontSize:14 }}>👋</span>
+                <span style={{ color:"#fff",fontSize:13,fontWeight:600 }}>שלום {regForm.name || user?.user_metadata?.name || "אורח"}</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Favorites button */}
-        <div style={{ position:"absolute",top:16,left:64,zIndex:10 }}>
-          <button onClick={()=>{setFOnly(o=>!o);setSettingsOpen(false);}} style={{ background: fOnly ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
-            onMouseEnter={e=>e.currentTarget.style.background= fOnly ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.35)"}
-            onMouseLeave={e=>e.currentTarget.style.background= fOnly ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.2)"}>
-            <Heart size={18} fill={fOnly ? "#E8613C" : "none"} color={fOnly ? "#E8613C" : "#fff"}/>
-          </button>
-        </div>
-
-        {/* Settings button */}
-        <div style={{ position:"absolute",top:16,left:16,zIndex:10 }}>
-          <button onClick={()=>setSettingsOpen(o=>!o)} style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
-            onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.35)"}
-            onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.2)"}>
-            <Settings size={18} color="#fff"/>
-          </button>
-          {settingsOpen && (
-            <div style={{ position:"absolute",top:48,left:0,background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.15)",minWidth:200,overflow:"hidden",animation:"modalIn .2s ease" }}>
-              <div style={{ padding:"12px 16px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:10 }}>
-                <User size={15} color="#2d7720"/>
-                <span style={{ fontSize:13,fontWeight:700,color:T.text }}>{regForm.name || user?.user_metadata?.name || "אורח"}</span>
-              </div>
-              <button onClick={()=>setDarkMode(d=>!d)} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:T.text,fontFamily:"'Rubik'",fontWeight:600 }}
-                onMouseEnter={e=>e.currentTarget.style.background=darkMode?"#1E293B":"#F8FAFC"}
-                onMouseLeave={e=>e.currentTarget.style.background="none"}>
-                {darkMode ? <Sun size={15} color="#F59E0B"/> : <Moon size={15} color="#1a6abf"/>}
-                {darkMode ? "מצב יום" : "מצב לילה"}
-              </button>
-              <button onClick={()=>{setPage("register");setSettingsOpen(false);}} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:"#DC2626",fontFamily:"'Rubik'",fontWeight:600 }}
-                onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
-                onMouseLeave={e=>e.currentTarget.style.background="none"}>
-                <LogOut size={15}/> התנתקות
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Centered content */}
-        <div style={{ position:"relative",zIndex:2,padding:"100px 48px 60px",maxWidth:1200,margin:"0 auto",textAlign:"center" }}>
+        {/* ── Centered content ── */}
+        <div style={{ position:"relative",zIndex:2,padding:"100px 48px 56px",maxWidth:700,margin:"0 auto",textAlign:"center" }}>
           <div style={{ animation:"heroIn .7s ease both" }}>
-            <div style={{ display:"inline-flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.12)",backdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,.2)",borderRadius:30,padding:"7px 18px",marginBottom:20,animation:"badgeIn .6s ease both" }}>
-              <span style={{ fontSize:16 }}>👋</span>
-              <span style={{ color:"rgba(255,255,255,.95)",fontSize:14,fontWeight:600 }}>שלום {regForm.name || user?.user_metadata?.name || "אורח"}</span>
-            </div>
-            <img src="/logo.png" alt="AfulaGo" style={{ width:320,height:320,objectFit:"contain",margin:"0 auto 8px",display:"block",filter:"drop-shadow(0 4px 32px rgba(0,0,0,.3))",animation:"float 3s ease-in-out infinite",maskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)" }}/>
-            <p style={{ color:"rgba(255,255,255,.82)",margin:"0 0 32px",fontSize:16,fontWeight:400,maxWidth:480,marginLeft:"auto",marginRight:"auto",lineHeight:1.7 }}>מסעדות, אטרקציות, בילויים ועוד — הכל על עפולה במקום אחד</p>
+            <p style={{ color:"rgba(255,255,255,.85)",margin:"0 0 28px",fontSize:17,fontWeight:400,lineHeight:1.8 }}>מסעדות, אטרקציות, בילויים ועוד — הכל על עפולה במקום אחד</p>
 
             {/* Search bar */}
-            <div style={{ maxWidth:520,margin:"0 auto 28px",position:"relative" }}>
+            <div style={{ maxWidth:520,margin:"0 auto 24px",position:"relative" }}>
               <Search size={18} color="#94A3B8" style={{ position:"absolute",top:"50%",right:18,transform:"translateY(-50%)",pointerEvents:"none" }}/>
               <input value={q} onChange={e=>setQ(e.target.value)} placeholder="חיפוש מקומות, מסעדות, אטרקציות..." style={{ width:"100%",padding:"16px 52px 16px 20px",borderRadius:16,border:"none",fontSize:15,fontFamily:"'Rubik'",background:"rgba(255,255,255,.95)",backdropFilter:"blur(12px)",outline:"none",boxShadow:"0 8px 32px rgba(0,0,0,.18)",boxSizing:"border-box",color:"#0F172A" }}/>
             </div>
 
-            <div style={{ display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap" }}>
-              {[
-                {ic:Calendar,t:`נוסדה ב-${cd.founded||"1925"}`},
-                {ic:MapPin, t: cd.area||"28 קמ״ר"}
-              ].map((x,i)=>(
-                <div key={i} style={{ display:"flex",alignItems:"center",gap:7,color:"#fff",fontSize:13,fontWeight:600,background:"rgba(255,255,255,.15)",padding:"9px 20px",borderRadius:30,backdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,.25)",boxShadow:"0 2px 12px rgba(0,0,0,.1)",animation:`badgeIn .5s ease ${i*.1+.3}s both` }}><x.ic size={14}/>{x.t}</div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
 
       {/* ── Category nav ── */}
       <div style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
-        <div style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px" }}>
-          <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0" }}>
+        <div style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
+          <img src="/logo.png" alt="AfulaGo" style={{ width:40,height:40,objectFit:"contain",flexShrink:0,borderRadius:10 }}/>
+          <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1 }}>
             {[{k:"all",label:"הכל",Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
@@ -578,12 +640,14 @@ export default function App() {
 
         <div style={{ marginBottom:48 }}>
           {(()=>{
+            const ql=q.trim().toLowerCase();
             const cats=activeCat==="all"?Object.keys(places||{}):[activeCat];
-            const empty=cats.every(c=>{const it=(places||{})[c]||[];return fOnly?it.every(i=>!favs.has(i.name)):!it.length});
-            if(empty)return(<div style={{ textAlign:"center",padding:"50px 20px",color:T.textMuted }}><Heart size={44} color={T.border} style={{ marginBottom:14 }}/><p style={{ fontSize:15,fontWeight:600 }}>{fOnly?"אין מועדפים עדיין — לחצו על ❤️ כדי לשמור":"לא נמצאו תוצאות"}</p></div>);
+            const empty=cats.every(c=>{let it=(places||{})[c]||[];if(fOnly)it=it.filter(i=>favs.has(i.name));if(ql)it=it.filter(i=>(i.name||"").toLowerCase().includes(ql)||(i.desc||"").toLowerCase().includes(ql));return!it.length});
+            if(empty)return(<div style={{ textAlign:"center",padding:"50px 20px",color:T.textMuted }}><Search size={44} color={T.border} style={{ marginBottom:14 }}/><p style={{ fontSize:15,fontWeight:600 }}>{ql?`לא נמצאו תוצאות עבור "${q}"`:fOnly?"אין מועדפים עדיין — לחצו על ❤️ כדי לשמור":"לא נמצאו תוצאות"}</p></div>);
             return cats.map(cat=>{
               let items=(places||{})[cat]||[];
               if(fOnly)items=items.filter(i=>favs.has(i.name));
+              if(ql)items=items.filter(i=>(i.name||"").toLowerCase().includes(ql)||(i.desc||"").toLowerCase().includes(ql));
               if(!items.length)return null;
               const{Icon,label,color}=CATS[cat]||{};
               return(
@@ -689,6 +753,11 @@ export default function App() {
           <span style={{ color:"rgba(255,255,255,.95)",fontSize:22,fontWeight:800,letterSpacing:"-0.5px" }}>AfulaGo</span>
         </div>
         <span style={{ color:"rgba(255,255,255,.65)",fontSize:15 }}>בירת העמק • 2026</span>
+        <div style={{ display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",margin:"14px 0 8px" }}>
+          {[{ic:Calendar,t:`נוסדה ב-${cd.founded||"1925"}`},{ic:MapPin,t:cd.area||"28 קמ״ר"}].map((x,i)=>(
+            <div key={i} style={{ display:"flex",alignItems:"center",gap:7,color:"rgba(255,255,255,.9)",fontSize:13,fontWeight:600,background:"rgba(255,255,255,.15)",padding:"8px 18px",borderRadius:30,border:"1px solid rgba(255,255,255,.2)" }}><x.ic size={14}/>{x.t}</div>
+          ))}
+        </div>
         <p style={{ color:"rgba(255,255,255,.65)",fontSize:15,margin:"8px 0 0" }}>נוצר על ידי בנימין יונה</p>
       </div>
     </div>
