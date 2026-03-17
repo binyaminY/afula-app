@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef } from "react";
-import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, TrendingUp, Calendar, Utensils, TreePine, ShoppingBag, Landmark, Wrench, Wine, Sun, BookOpen, Award, X, Sparkles, Info, Settings, LogOut, User } from "lucide-react";
+import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, TrendingUp, Calendar, Utensils, TreePine, ShoppingBag, Landmark, Wrench, Wine, Sun, Moon, BookOpen, Award, X, Sparkles, Info, Settings, LogOut, User, Plus } from "lucide-react";
 
 /* ═══════════════════════════════════════
    CITY DATABASE - cleaned & verified
@@ -128,18 +128,27 @@ const CATS = {
 };
 
 /* ── Theme ── */
-const T = {
+const LIGHT = {
   bg: "#F0F6FF", pill: "#E8F0FB", surface: "#fff",
   border: "#D1E3F8", borderLight: "#E4EFFC",
   accent: "#0369A1", accentSoft: "#DBEAFE",
   text: "#0F172A", textSoft: "#334155", textMuted: "#64748B",
   shadow: "0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.05)",
   hover: "0 8px 32px rgba(0,0,0,.09), 0 2px 6px rgba(0,0,0,.03)",
-  star: "#F59E0B",
+  star: "#F59E0B", card: "#fff", cardBorder: "#e2e8f0",
+};
+const DARK = {
+  bg: "#0F172A", pill: "#1E293B", surface: "#1E293B",
+  border: "#334155", borderLight: "#2D3F55",
+  accent: "#38BDF8", accentSoft: "#0C4A6E",
+  text: "#F1F5F9", textSoft: "#CBD5E1", textMuted: "#64748B",
+  shadow: "0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.4)",
+  hover: "0 8px 32px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.3)",
+  star: "#F59E0B", card: "#1E293B", cardBorder: "#334155",
 };
 
 /* ── Small components ── */
-const Strs = ({ r }) => (
+const Strs = ({ r, T }) => (
   r === 0 ? (
     <span style={{ fontSize:11, fontWeight:600, color:"#0369A1", background:"#E0F2FE", padding:"2px 8px", borderRadius:8 }}>חדש</span>
   ) : (
@@ -150,7 +159,7 @@ const Strs = ({ r }) => (
   )
 );
 
-function Card({ p, cat, favs, toggle, click }) {
+function Card({ p, cat, favs, toggle, click, T }) {
   const f = favs.has(p.name), cc = CATS[cat]?.color || "#888";
   const [imgErr, setImgErr] = useState(false);
   const hasImg = p.img && !imgErr;
@@ -180,7 +189,7 @@ function Card({ p, cat, favs, toggle, click }) {
           {p.price&&<span style={{ fontSize: 10.5, fontWeight: 700, color: "#059669", background:"#ECFDF5", padding:"2px 6px", borderRadius:6 }}>{p.price}</span>}
         </div>
         <p style={{ margin: "0 0 7px", fontSize: 12, color: T.textSoft, lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.desc}</p>
-        <Strs r={p.rating}/>
+        <Strs r={p.rating} T={T}/>
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 7, color: T.textMuted, fontSize: 11 }}><MapPin size={10}/><span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.address}</span></div>
         {p.phone&&<div style={{ display:"flex",alignItems:"center",gap:4,marginTop:2,color:T.textMuted,fontSize:11 }}><Phone size={10}/><span dir="ltr">{p.phone}</span></div>}
       </div>
@@ -188,7 +197,7 @@ function Card({ p, cat, favs, toggle, click }) {
   );
 }
 
-function Modal({ p, cat, close, favs, toggle }) {
+function Modal({ p, cat, close, favs, toggle, T }) {
   if (!p) return null;
   const f = favs.has(p.name), cc = CATS[cat]?.color||"#888";
   const [imgErr, setImgErr] = useState(false);
@@ -209,7 +218,7 @@ function Modal({ p, cat, close, favs, toggle }) {
         <div style={{ padding:"20px 22px 24px" }}>
           <h2 style={{ margin:"0 0 8px",fontSize:20,fontWeight:800,color:T.text }}>{p.name}</h2>
           <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14,flexWrap:"wrap" }}>
-            <Strs r={p.rating}/>
+            <Strs r={p.rating} T={T}/>
             {p.price&&<span style={{ fontSize:12,fontWeight:700,color:"#059669",background:"#ECFDF5",padding:"2px 8px",borderRadius:8 }}>{p.price}</span>}
             {p.trending&&<span style={{ background:"#E0F2FE",color:"#0369A1",fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={10}/>טרנדי</span>}
           </div>
@@ -283,6 +292,10 @@ export default function App() {
   const [fOnly, setFOnly] = useState(false);
   const [page, setPage] = useState("login"); // "register" | "login" | "app"
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [profileImg, setProfileImg] = useState(null);
+  const profileInputRef = useRef(null);
+  const T = darkMode ? DARK : LIGHT;
   const [regForm, setRegForm] = useState({ name:"", email:"", phone:"", password:"", city:"עפולה" });
   const [regStep, setRegStep] = useState(0); // 0=form, 1=success
   const [authErr, setAuthErr] = useState("");
@@ -336,19 +349,23 @@ export default function App() {
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
     @keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(10px)}to{opacity:1;transform:none}}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-    @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-    @keyframes heroIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    @keyframes heroIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
     @keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    @keyframes badgeIn{from{opacity:0;transform:scale(.8) translateY(8px)}to{opacity:1;transform:none}}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     ::-webkit-scrollbar{width:5px;height:5px}
     ::-webkit-scrollbar-thumb{background:#C4D5E8;border-radius:10px}
     ::-webkit-scrollbar-track{background:transparent}
     body{margin:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
     img{-webkit-user-drag:none;user-select:none}
-    button{-webkit-tap-highlight-color:transparent}
+    button{-webkit-tap-highlight-color:transparent;font-family:'Rubik',sans-serif}
+    .cat-scroll::-webkit-scrollbar{display:none}
+    .cat-scroll{-ms-overflow-style:none;scrollbar-width:none}
   `;
 
   // ─── REGISTRATION PAGE ───
@@ -417,19 +434,31 @@ export default function App() {
 
   // ─── MAIN PAGE ───
   return (
-    <div dir="rtl" style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg }}>
+    <div dir="rtl" style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s" }}>
       <style>{css}</style>
-      {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog}/>}
+      {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog} T={T}/>}
 
       {/* ── Hero ── */}
-      <div style={{ position:"relative",overflow:"hidden",minHeight:320 }}>
-        <img src={cd.photo} alt="" onError={e=>{e.target.style.display="none"}} style={{ position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover" }}/>
-        <div style={{ position:"absolute",inset:0,background:"linear-gradient(135deg, rgba(2,132,199,.88), rgba(3,105,161,.92))" }}/>
+      <div style={{ position:"relative",overflow:"hidden",minHeight:460 }}>
+        <img src={cd.photo} alt="" onError={e=>{e.target.style.display="none"}} style={{ position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",transform:"scale(1.04)" }}/>
+        <div style={{ position:"absolute",inset:0,background:"linear-gradient(160deg, rgba(2,100,180,.93) 0%, rgba(3,90,150,.88) 50%, rgba(1,60,120,.95) 100%)" }}/>
+        <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 30% 0%, rgba(56,189,248,.18) 0%, transparent 60%)" }}/>
+        <div style={{ position:"absolute",bottom:0,left:0,right:0,height:80,background:`linear-gradient(to top, ${T.bg}, transparent)` }}/>
 
         {/* Profile picture */}
         <div style={{ position:"absolute",top:16,right:16,zIndex:10 }}>
-          <div style={{ width:40,height:40,borderRadius:"50%",border:"2px solid rgba(255,255,255,.7)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.15)" }}>
-            <User size={20} color="#fff"/>
+          <input ref={profileInputRef} type="file" accept="image/*" style={{ display:"none" }}
+            onChange={e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=ev=>setProfileImg(ev.target.result);r.readAsDataURL(f);}}}/>
+          <div onClick={()=>profileInputRef.current.click()} style={{ position:"relative",width:56,height:56,borderRadius:"50%",border:"2.5px solid rgba(255,255,255,.85)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 12px rgba(0,0,0,.2)",transition:"transform .2s" }}
+            onMouseEnter={e=>e.currentTarget.style.transform="scale(1.07)"}
+            onMouseLeave={e=>e.currentTarget.style.transform=""}>
+            {profileImg
+              ? <img src={profileImg} alt="פרופיל" style={{ width:"100%",height:"100%",objectFit:"cover" }}/>
+              : <User size={26} color="#fff"/>
+            }
+            <div style={{ position:"absolute",bottom:0,right:0,width:18,height:18,background:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 1px 4px rgba(0,0,0,.2)" }}>
+              <Plus size={11} color="#0284c7" strokeWidth={3}/>
+            </div>
           </div>
         </div>
 
@@ -450,11 +479,17 @@ export default function App() {
             <Settings size={18} color="#fff"/>
           </button>
           {settingsOpen && (
-            <div style={{ position:"absolute",top:48,left:0,background:"#fff",borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.15)",minWidth:200,overflow:"hidden",animation:"modalIn .2s ease" }}>
-              <div style={{ padding:"12px 16px",borderBottom:"1px solid #F1F5F9",display:"flex",alignItems:"center",gap:10 }}>
+            <div style={{ position:"absolute",top:48,left:0,background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.15)",minWidth:200,overflow:"hidden",animation:"modalIn .2s ease" }}>
+              <div style={{ padding:"12px 16px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:10 }}>
                 <User size={15} color="#0284c7"/>
                 <span style={{ fontSize:13,fontWeight:700,color:T.text }}>{regForm.name || user?.user_metadata?.name || "אורח"}</span>
               </div>
+              <button onClick={()=>setDarkMode(d=>!d)} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:T.text,fontFamily:"'Rubik'",fontWeight:600 }}
+                onMouseEnter={e=>e.currentTarget.style.background=darkMode?"#1E293B":"#F8FAFC"}
+                onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                {darkMode ? <Sun size={15} color="#F59E0B"/> : <Moon size={15} color="#6366f1"/>}
+                {darkMode ? "מצב יום" : "מצב לילה"}
+              </button>
               <button onClick={()=>{setPage("register");setSettingsOpen(false);}} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:"#DC2626",fontFamily:"'Rubik'",fontWeight:600 }}
                 onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
                 onMouseLeave={e=>e.currentTarget.style.background="none"}>
@@ -465,23 +500,46 @@ export default function App() {
         </div>
 
         {/* Centered content */}
-        <div style={{ position:"relative",zIndex:2,padding:"80px 48px 40px",maxWidth:1200,margin:"0 auto",textAlign:"center" }}>
+        <div style={{ position:"relative",zIndex:2,padding:"100px 48px 60px",maxWidth:1200,margin:"0 auto",textAlign:"center" }}>
           <div style={{ animation:"heroIn .7s ease both" }}>
-            <p style={{ color:"rgba(255,255,255,.9)",fontSize:17,fontWeight:600,margin:"0 0 10px",letterSpacing:"0.2px" }}>
-              שלום {regForm.name || user?.user_metadata?.name || "אורח"} 👋
-            </p>
-            <h1 style={{ color:"#fff",margin:"0 0 12px",fontSize:"clamp(42px,9vw,68px)",fontWeight:900,textShadow:"0 4px 32px rgba(0,0,0,.3)",letterSpacing:"-1.5px",lineHeight:.95 }}>AfulaGo</h1>
-            <p style={{ color:"rgba(255,255,255,.92)",margin:"0 0 16px",fontSize:15,fontWeight:400,maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.6 }}>מסעדות, אטרקציות, בילויים, התנדבות ועוד — הכל על עפולה במקום אחד</p>
-            <div style={{ display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",marginBottom:28 }}>
+            <div style={{ display:"inline-flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.12)",backdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,.2)",borderRadius:30,padding:"7px 18px",marginBottom:20,animation:"badgeIn .6s ease both" }}>
+              <span style={{ fontSize:16 }}>👋</span>
+              <span style={{ color:"rgba(255,255,255,.95)",fontSize:14,fontWeight:600 }}>שלום {regForm.name || user?.user_metadata?.name || "אורח"}</span>
+            </div>
+            <h1 style={{ color:"#fff",margin:"0 0 14px",fontSize:"clamp(52px,9vw,80px)",fontWeight:900,textShadow:"0 4px 40px rgba(0,0,0,.25)",letterSpacing:"-2px",lineHeight:.92 }}>AfulaGo</h1>
+            <p style={{ color:"rgba(255,255,255,.82)",margin:"0 0 32px",fontSize:16,fontWeight:400,maxWidth:480,marginLeft:"auto",marginRight:"auto",lineHeight:1.7 }}>מסעדות, אטרקציות, בילויים ועוד — הכל על עפולה במקום אחד</p>
+
+            {/* Search bar */}
+            <div style={{ maxWidth:520,margin:"0 auto 28px",position:"relative" }}>
+              <Search size={18} color="#94A3B8" style={{ position:"absolute",top:"50%",right:18,transform:"translateY(-50%)",pointerEvents:"none" }}/>
+              <input value={q} onChange={e=>setQ(e.target.value)} placeholder="חיפוש מקומות, מסעדות, אטרקציות..." style={{ width:"100%",padding:"16px 52px 16px 20px",borderRadius:16,border:"none",fontSize:15,fontFamily:"'Rubik'",background:"rgba(255,255,255,.95)",backdropFilter:"blur(12px)",outline:"none",boxShadow:"0 8px 32px rgba(0,0,0,.18)",boxSizing:"border-box",color:"#0F172A" }}/>
+            </div>
+
+            <div style={{ display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap" }}>
               {[
-                {ic:Calendar,t:`נוסדה ${cd.founded||"1925"}`},
+                {ic:Calendar,t:`נוסדה ב-${cd.founded||"1925"}`},
                 {ic:MapPin, t: cd.area||"28 קמ״ר"}
               ].map((x,i)=>(
-                <div key={i} style={{ display:"flex",alignItems:"center",gap:7,color:"#fff",fontSize:13,fontWeight:700,background:"rgba(255,255,255,.2)",padding:"8px 18px",borderRadius:30,backdropFilter:"blur(10px)",border:"1.5px solid rgba(255,255,255,.35)",boxShadow:"0 2px 12px rgba(0,0,0,.1)" }}><x.ic size={14}/>{x.t}</div>
+                <div key={i} style={{ display:"flex",alignItems:"center",gap:7,color:"#fff",fontSize:13,fontWeight:600,background:"rgba(255,255,255,.15)",padding:"9px 20px",borderRadius:30,backdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,.25)",boxShadow:"0 2px 12px rgba(0,0,0,.1)",animation:`badgeIn .5s ease ${i*.1+.3}s both` }}><x.ic size={14}/>{x.t}</div>
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
+      {/* ── Category nav ── */}
+      <div style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
+        <div style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px" }}>
+          <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0" }}>
+            {[{k:"all",label:"הכל",Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v}))].map(({k,label,Icon,color})=>{
+              const active=activeCat===k;
+              return(
+                <button key={k} onClick={()=>setAC(k)} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:30,border:"none",background:active?(color||T.accent):"transparent",color:active?"#fff":(color||T.textSoft),fontWeight:active?700:500,fontSize:13,cursor:"pointer",whiteSpace:"nowrap",transition:"all .2s",flexShrink:0,boxShadow:active?`0 4px 14px ${(color||T.accent)}40`:"none" }}>
+                  {Icon&&<Icon size={14}/>}{label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -489,20 +547,30 @@ export default function App() {
       <div style={{ maxWidth:1400,margin:"0 auto",padding:"28px 48px 0" }}>
 
         {trending.length>0&&activeCat==="all"&&!fOnly&&(
-          <div style={{ marginBottom:32 }}>
-            <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14 }}><h2 style={{ margin:0,fontSize:18,fontWeight:800,color:T.text }}>🔥 מקומות חמים</h2></div>
-            <div style={{ display:"flex",gap:14,overflowX:"auto",paddingBottom:6 }}>
-              {trending.map((p,i)=>(
-                <div key={i} onClick={()=>{setModal(p);setMCat(p._c)}} style={{ minWidth:180,borderRadius:14,background:T.surface,cursor:"pointer",transition:"all .2s",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",flexShrink:0,overflow:"hidden",animation:`slideIn .4s ease ${i*.07}s both` }}
-                  onMouseEnter={e=>e.currentTarget.style.transform="translateY(-3px)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
-                  <div style={{ height:70,display:"flex",alignItems:"center",justifyContent:"center",background:`${CATS[p._c]?.color}10` }}><span style={{ fontSize:36 }}>{p.icon}</span></div>
-                  <div style={{ padding:12 }}>
-                    <div style={{ fontSize:12,fontWeight:800,color:CATS[p._c]?.color,marginBottom:2 }}>{CATS[p._c]?.label}</div>
-                    <h4 style={{ margin:"0 0 4px",fontSize:13.5,fontWeight:700,color:T.text }}>{p.name}</h4>
-                    <Strs r={p.rating}/>
+          <div style={{ marginBottom:40 }}>
+            <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:18 }}>
+              <div style={{ width:4,height:22,borderRadius:4,background:"linear-gradient(180deg,#F59E0B,#EF4444)" }}/>
+              <h2 style={{ margin:0,fontSize:20,fontWeight:800,color:T.text }}>מקומות חמים</h2>
+              <span style={{ fontSize:20 }}>🔥</span>
+            </div>
+            <div className="cat-scroll" style={{ display:"flex",gap:16,overflowX:"auto",paddingBottom:8 }}>
+              {trending.map((p,i)=>{
+                const cc=CATS[p._c]?.color||"#888";
+                return(
+                <div key={i} onClick={()=>{setModal(p);setMCat(p._c)}} style={{ minWidth:200,borderRadius:20,background:T.card,cursor:"pointer",transition:"all .25s",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.12:.06})`,flexShrink:0,overflow:"hidden",animation:`slideIn .4s ease ${i*.07}s both` }}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.boxShadow=`0 12px 32px ${cc}40`}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.12:.06})`}}>
+                  <div style={{ height:90,display:"flex",alignItems:"center",justifyContent:"center",background:`linear-gradient(135deg,${cc}22,${cc}0a)`,position:"relative" }}>
+                    <span style={{ fontSize:42 }}>{p.icon}</span>
+                    <div style={{ position:"absolute",top:8,right:8,background:cc,color:"#fff",fontSize:9,fontWeight:800,padding:"2px 8px",borderRadius:10 }}>{CATS[p._c]?.label}</div>
                   </div>
+                  <div style={{ padding:"12px 14px 14px" }}>
+                    <h4 style={{ margin:"0 0 6px",fontSize:14,fontWeight:700,color:T.text,lineHeight:1.3 }}>{p.name}</h4>
+                    <Strs r={p.rating} T={T}/>
+                  </div>
+                  <div style={{ height:3,background:`linear-gradient(90deg,${cc},${cc}44)` }}/>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         )}
@@ -519,9 +587,11 @@ export default function App() {
               if(!items.length)return null;
               const{Icon,label,color}=CATS[cat]||{};
               return(
-                <div key={cat} style={{ marginBottom:32 }}>
-                  <div style={{ display:"flex",alignItems:"center",marginBottom:14 }}>
-                    <div style={{ display:"flex",alignItems:"center",gap:7 }}>{Icon&&<Icon size={18} color={color}/>}<h2 style={{ margin:0,fontSize:18,fontWeight:800,color:T.text }}>{label}</h2></div>
+                <div key={cat} style={{ marginBottom:40 }}>
+                  <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:18 }}>
+                    <div style={{ width:4,height:22,borderRadius:4,background:color||T.accent }}/>
+                    <div style={{ width:36,height:36,borderRadius:10,background:`${color||T.accent}18`,display:"flex",alignItems:"center",justifyContent:"center" }}>{Icon&&<Icon size={18} color={color||T.accent}/>}</div>
+                    <h2 style={{ margin:0,fontSize:20,fontWeight:800,color:T.text }}>{label}</h2>
                   </div>
                   {cat==="food" ? (()=>{
                     /* Split food items into sub-sections */
@@ -540,9 +610,9 @@ export default function App() {
                             const hasImg=p.img;
                             const f=favs.has(p.name);
                             return(
-                              <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.surface,borderRadius:14,overflow:"hidden",cursor:"pointer",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all .3s",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
-                                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=T.hover}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 4px 12px rgba(0,0,0,0.05)"}}>
-                                <div style={{ height:160,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}12, ${cc}06)`,position:"relative",overflow:"hidden" }}>
+                              <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
+                                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
+                                <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
                                   {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48 }}>{p.icon}</span>}
                                   {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                                   {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
@@ -567,9 +637,9 @@ export default function App() {
                       const hasImg=p.img;
                       const f=favs.has(p.name);
                       return(
-                        <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.surface,borderRadius:14,overflow:"hidden",cursor:"pointer",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all .3s",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
-                          onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=T.hover}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 4px 12px rgba(0,0,0,0.05)"}}>
-                          <div style={{ height:160,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}12, ${cc}06)`,position:"relative",overflow:"hidden" }}>
+                        <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
+                          onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
+                          <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
                             {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48 }}>{p.icon}</span>}
                             {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                             {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
@@ -577,10 +647,11 @@ export default function App() {
                               <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"}/>
                             </button>
                           </div>
-                          <div style={{ padding:"10px 12px 12px" }}>
-                            <h3 style={{ margin:"0 0 4px",fontSize:14,fontWeight:700,color:T.text,lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</h3>
-                            <p style={{ margin:0,fontSize:12,color:T.textSoft,lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",minHeight:32 }}>{p.desc}</p>
+                          <div style={{ padding:"12px 14px 14px" }}>
+                            <h3 style={{ margin:"0 0 5px",fontSize:14.5,fontWeight:700,color:T.text,lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</h3>
+                            <p style={{ margin:0,fontSize:12,color:T.textSoft,lineHeight:1.5,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",minHeight:36 }}>{p.desc}</p>
                           </div>
+                          <div style={{ height:3,background:`linear-gradient(90deg,${cc},${cc}33)` }}/>
                         </div>
                       );
                     })}
@@ -594,9 +665,9 @@ export default function App() {
       </div>
 
       {/* ── About Afula — bottom of page ── */}
-      <div style={{ background:"rgba(255,138,92,.05)",padding:"36px 24px",borderTop:`1px solid ${T.border}` }}>
+      <div style={{ background:T.pill,padding:"36px 24px",borderTop:`1px solid ${T.border}` }}>
         <div style={{ maxWidth:1400,margin:"0 auto" }}>
-          <div style={{ background:T.surface,borderRadius:14,padding:"24px 28px",border:"1px solid #e6e6e6",boxShadow:"0 4px 12px rgba(0,0,0,0.05)" }}>
+          <div style={{ background:T.card,borderRadius:14,padding:"24px 28px",border:`1px solid ${T.cardBorder}`,boxShadow:"0 4px 12px rgba(0,0,0,0.05)" }}>
             <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14 }}><BookOpen size={18} color={T.accent}/><h2 style={{ margin:0,fontSize:18,fontWeight:800,color:T.text }}>📖 על עפולה</h2></div>
             <p style={{ fontSize:14,color:T.textSoft,lineHeight:1.8,margin:"0 0 18px" }}>{cd.history}</p>
             <h3 style={{ fontSize:14,fontWeight:700,color:T.text,marginBottom:10,display:"flex",alignItems:"center",gap:6 }}><Info size={14} color={T.accent}/>עובדות מעניינות</h3>
