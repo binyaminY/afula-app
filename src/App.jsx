@@ -33,81 +33,81 @@ const generatePlaces = (cityName) => {
   const DB = {
     "עפולה": {
       attractions: [
-        { name: "פארק חי העמק", desc: "פארק ענק עם פינת חי, מתקני שעשועים, קיר טיפוס, מתחם נינג׳ה ושבילי הליכה", rating: 0, address: "רח׳ חטיבת כפיר, רובע יזרעאל, עפולה", phone: "04-9536356", icon: "🎡", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Gilboa_mountains_and_Jezreel_valley.JPG/640px-Gilboa_mountains_and_Jezreel_valley.JPG" },
-        { name: "גבעת המורה", desc: "יער ומגדל תצפית עם נוף פנורמי מדהים על עמק יזרעאל כולו", rating: 0, address: "גבעת המורה, צפונית למרכז עפולה", icon: "⛰️", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Jezreel_Valley_view.jpg" },
-        { name: "גן לאומי מעיין חרוד", desc: "פארק נופש עם מעיין שופע למרגלות הגלבוע — קמפינג, שירותים ומקלחות", rating: 0, address: "כביש 71, בין עפולה לבית שאן", icon: "💧", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Ein_Harod.JPG/640px-Ein_Harod.JPG" },
-        { name: "גן לאומי גן השלושה (הסחנה)", desc: "בריכות מים טבעיות חמות מהיפות בארץ — רחצה בטבע", rating: 0, address: "כביש 669, ליד בית שאן (כ-25 דק׳ מעפולה)", icon: "🏊", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Gan_HaShlosha06.jpg/640px-Gan_HaShlosha06.jpg" },
-        { name: "גן לאומי בית שערים", desc: "אתר מורשת עולמית — מערות קבורה עתיקות ובית כנסת מתקופת המשנה", rating: 0, address: "ליד קריית טבעון (כ-15 דק׳ מעפולה)", icon: "🏛️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Bet_Shearim_national_park_catacombs_entrance.jpg/640px-Bet_Shearim_national_park_catacombs_entrance.jpg" },
-        { name: "גן לאומי תל מגידו", desc: "אתר ארכיאולוגי מקראי — שרידי ארמונות, מקדשים ומערכת מים", rating: 0, address: "צומת מגידו (כ-20 דק׳ מעפולה)", icon: "🏺", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Tel_Megiddo_2007041.jpg/640px-Tel_Megiddo_2007041.jpg" },
-        { name: "הר תבור", desc: "שמורת טבע ירוקה כל השנה — נופים, שבילים ואתרי דת", rating: 0, address: "הר תבור (כ-15 דק׳ מעפולה)", icon: "🏔️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Mt._Tabor_Israel.JPG/640px-Mt._Tabor_Israel.JPG" },
-        { name: "עין גדעון", desc: "מעיין עתיק — באר מים עגולה מוקפת ירוק", rating: 0, address: "ליד כפר גדעון, צפונית לעפולה", icon: "🌊", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Ein_Harod.JPG/640px-Ein_Harod.JPG" },
-        { name: "עין יבקע (מעיין הסוסים)", desc: "מעיין טורקיז עם בריכת אבן רומית — מים צלולים כל השנה", rating: 0, address: "ליד כביש 77, סמוך לכעביה", icon: "🐴", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Nahal_Harod.JPG/640px-Nahal_Harod.JPG" },
-        { name: "תל עפולה", desc: "אתר ארכיאולוגי בלב העיר עם ממצאים מתקופות שונות", rating: 0, address: "רח׳ ירושלים, מרכז עפולה", icon: "🏛️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Afula_station.jpg/640px-Afula_station.jpg" },
-        { name: "תחנת הרכבת ההיסטורית", desc: "תחנת רכבת עות׳מאנית משוקמת עם מגדל מים", rating: 0, address: "רח׳ הנשיא ויצמן / שפרינצק, עפולה", icon: "🚂", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Afula_station.jpg/640px-Afula_station.jpg" },
-        { name: "נחל חרוד", desc: "נחל לטיולי הליכה ואופניים עם נופי עמק ופינות פיקניק", rating: 0, address: "ממרגלות גבעת המורה מזרחה", icon: "🌿", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Nahal_Harod.JPG/640px-Nahal_Harod.JPG" },
-        { name: "פסל אלכסנדר זייד", desc: "תצפית מדהימה על עמק יזרעאל ויער השומרים", rating: 0, address: "ליד בית שערים (כ-15 דק׳ מעפולה)", icon: "🗿", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Alexander_Zeid_statue.jpg/640px-Alexander_Zeid_statue.jpg" },
-        { name: "הרי הגלבוע", desc: "יערות, אירוסים, מסלולי טיול ותצפיות נוף", rating: 0, address: "הרי הגלבוע (כ-20 דק׳ מעפולה)", icon: "🌺", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Gilboa_mountains_and_Jezreel_valley.JPG/640px-Gilboa_mountains_and_Jezreel_valley.JPG" },
-        { name: "כיכר דוד", desc: "גן ציבורי במרכז העיר עם שטח ירוק ופינות ישיבה", rating: 0, address: "רח׳ ירושלים, עפולה", icon: "🌳", img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Jezreel_Valley_view.jpg" },
+        { name: "פארק חי העמק", desc: "פארק ענק עם פינת חי, מתקני שעשועים, קיר טיפוס, מתחם נינג׳ה ושבילי הליכה", rating: 0, address: "רח׳ חטיבת כפיר, רובע יזרעאל, עפולה", phone: "04-9536356", icon: "🎡", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gilboa_mountains_and_Jezreel_valley.JPG?width=640" },
+        { name: "גבעת המורה", desc: "יער ומגדל תצפית עם נוף פנורמי מדהים על עמק יזרעאל כולו", rating: 0, address: "גבעת המורה, צפונית למרכז עפולה", icon: "⛰️", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Jezreel_Valley_view.jpg?width=640" },
+        { name: "גן לאומי מעיין חרוד", desc: "פארק נופש עם מעיין שופע למרגלות הגלבוע — קמפינג, שירותים ומקלחות", rating: 0, address: "כביש 71, בין עפולה לבית שאן", icon: "💧", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ein_Harod.JPG?width=640" },
+        { name: "גן לאומי גן השלושה (הסחנה)", desc: "בריכות מים טבעיות חמות מהיפות בארץ — רחצה בטבע", rating: 0, address: "כביש 669, ליד בית שאן (כ-25 דק׳ מעפולה)", icon: "🏊", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gan_HaShlosha06.jpg?width=640" },
+        { name: "גן לאומי בית שערים", desc: "אתר מורשת עולמית — מערות קבורה עתיקות ובית כנסת מתקופת המשנה", rating: 0, address: "ליד קריית טבעון (כ-15 דק׳ מעפולה)", icon: "🏛️", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Bet_Shearim_national_park_catacombs_entrance.jpg?width=640" },
+        { name: "גן לאומי תל מגידו", desc: "אתר ארכיאולוגי מקראי — שרידי ארמונות, מקדשים ומערכת מים", rating: 0, address: "צומת מגידו (כ-20 דק׳ מעפולה)", icon: "🏺", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Megiddo_2007041.jpg?width=640" },
+        { name: "הר תבור", desc: "שמורת טבע ירוקה כל השנה — נופים, שבילים ואתרי דת", rating: 0, address: "הר תבור (כ-15 דק׳ מעפולה)", icon: "🏔️", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Mt._Tabor_Israel.JPG?width=640" },
+        { name: "עין גדעון", desc: "מעיין עתיק — באר מים עגולה מוקפת ירוק", rating: 0, address: "ליד כפר גדעון, צפונית לעפולה", icon: "🌊", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ein_Harod.JPG?width=640" },
+        { name: "עין יבקע (מעיין הסוסים)", desc: "מעיין טורקיז עם בריכת אבן רומית — מים צלולים כל השנה", rating: 0, address: "ליד כביש 77, סמוך לכעביה", icon: "🐴", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Nahal_Harod.JPG?width=640" },
+        { name: "תל עפולה", desc: "אתר ארכיאולוגי בלב העיר עם ממצאים מתקופות שונות", rating: 0, address: "רח׳ ירושלים, מרכז עפולה", icon: "🏛️", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Afula_station.jpg?width=640" },
+        { name: "תחנת הרכבת ההיסטורית", desc: "תחנת רכבת עות׳מאנית משוקמת עם מגדל מים", rating: 0, address: "רח׳ הנשיא ויצמן / שפרינצק, עפולה", icon: "🚂", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Afula_station.jpg?width=640" },
+        { name: "נחל חרוד", desc: "נחל לטיולי הליכה ואופניים עם נופי עמק ופינות פיקניק", rating: 0, address: "ממרגלות גבעת המורה מזרחה", icon: "🌿", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Nahal_Harod.JPG?width=640" },
+        { name: "פסל אלכסנדר זייד", desc: "תצפית מדהימה על עמק יזרעאל ויער השומרים", rating: 0, address: "ליד בית שערים (כ-15 דק׳ מעפולה)", icon: "🗿", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Alexander_Zeid_statue.jpg?width=640" },
+        { name: "הרי הגלבוע", desc: "יערות, אירוסים, מסלולי טיול ותצפיות נוף", rating: 0, address: "הרי הגלבוע (כ-20 דק׳ מעפולה)", icon: "🌺", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gilboa_mountains_and_Jezreel_valley.JPG?width=640" },
+        { name: "כיכר דוד", desc: "גן ציבורי במרכז העיר עם שטח ירוק ופינות ישיבה", rating: 0, address: "רח׳ ירושלים, עפולה", icon: "🌳", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Jezreel_Valley_view.jpg?width=640" },
       ],
       nightlife: [
-        { name: "השוק 34", desc: "בר קוקטיילים ומעשנה בלב השוק — אווירה אותנטית", rating: 0, address: "השוק 34, עפולה", icon: "🍸", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Cosmopolitan_cocktail.jpg/640px-Cosmopolitan_cocktail.jpg" },
-        { name: "יולה בר", desc: "בר עם במה פתוחה, מוזיקה חיה, יינות וקוקטיילים", rating: 0, address: "החשמל 1, עפולה", icon: "🎶", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Backlit_keyboards_%282%29.jpg/640px-Backlit_keyboards_%282%29.jpg" },
-        { name: "פאב השוק", desc: "פאב משפחתי עם בירות, חדרי VIP ונשנושים", rating: 0, address: "השוק 32, עפולה", icon: "🍺", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Bierglaeser.jpg/640px-Bierglaeser.jpg" },
-        { name: "ליצ׳י ביסטרו בר", desc: "ביסטרו-בר מודרני עם קוקטיילים ואוכל", rating: 0, address: "שד׳ יצחק רבין, מתחם G, עפולה", icon: "🍹", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Cocktail_glass.svg/640px-Cocktail_glass.svg.png" },
+        { name: "השוק 34", desc: "בר קוקטיילים ומעשנה בלב השוק — אווירה אותנטית", rating: 0, address: "השוק 34, עפולה", icon: "🍸", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Cosmopolitan_cocktail.jpg?width=640" },
+        { name: "יולה בר", desc: "בר עם במה פתוחה, מוזיקה חיה, יינות וקוקטיילים", rating: 0, address: "החשמל 1, עפולה", icon: "🎶", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Cocktails.jpg?width=640" },
+        { name: "פאב השוק", desc: "פאב משפחתי עם בירות, חדרי VIP ונשנושים", rating: 0, address: "השוק 32, עפולה", icon: "🍺", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Pils_large.jpg?width=640" },
+        { name: "ליצ׳י ביסטרו בר", desc: "ביסטרו-בר מודרני עם קוקטיילים ואוכל", rating: 0, address: "שד׳ יצחק רבין, מתחם G, עפולה", icon: "🍹", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Cocktails.jpg?width=640" },
       ],
       food: [
         { name: "🥩 בשרי", _sub: true },
-        { name: "השוק 34 — מעשנה", desc: "בשר מעושן, בריסקט ורוסטביף באווירת שוק", rating: 0, address: "השוק 34, עפולה", icon: "🥩", price: "₪₪₪", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Brisket.jpg/640px-Brisket.jpg" },
-        { name: "BBB — בורגרס", desc: "המבורגרים כשרים, צ׳יפס וטבעות בצל", rating: 0, address: "מתחם פרנדלי בעמק, עפולה", phone: "04-6424446", icon: "🍔", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/RedMeatBurger.jpg/640px-RedMeatBurger.jpg" },
-        { name: "שווארמה חצי חצי", desc: "שווארמה בפיתה או בלאפה — מנות גדולות", rating: 0, address: "רח׳ יהושע חנקין, עפולה", icon: "🌯", price: "₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/2015-12-31_-_shawarma_-_1.jpg/640px-2015-12-31_-_shawarma_-_1.jpg" },
-        { name: "הסביח", desc: "סביחייה אגדית — פיתה חמה עם חציל ועמבה", rating: 0, address: "השוק 24, עפולה", phone: "04-6961830", icon: "🥙", price: "₪", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Sabich_Tel_Aviv.jpg/640px-Sabich_Tel_Aviv.jpg" },
-        { name: "פלאפל התחנה", desc: "פלאפל טרי בפיתה עם סלטים — קלאסיקה עפולאית", rating: 0, address: "ליד התחנה המרכזית, עפולה", icon: "🧆", price: "₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Falafels.jpg/640px-Falafels.jpg" },
-        { name: "אסתריקה", desc: "אוכל ביתי בשרי — עלי גפן, קובה ומנות מזרחיות", rating: 0, address: "התוכנה 4, אזה״ת עפולה", icon: "🍖", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Stuffed_grape_leaves.jpg/640px-Stuffed_grape_leaves.jpg" },
-        { name: "שינווה נקניקיות", desc: "נקניקיות מעושנות ביתיות — מוסד עפולאי ותיק", rating: 0, address: "השוק, עפולה", icon: "🌭", price: "₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/2ChickenSausages.jpg/640px-2ChickenSausages.jpg" },
+        { name: "השוק 34 — מעשנה", desc: "בשר מעושן, בריסקט ורוסטביף באווירת שוק", rating: 0, address: "השוק 34, עפולה", icon: "🥩", price: "₪₪₪", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Brisket.jpg?width=640" },
+        { name: "BBB — בורגרס", desc: "המבורגרים כשרים, צ׳יפס וטבעות בצל", rating: 0, address: "מתחם פרנדלי בעמק, עפולה", phone: "04-6424446", icon: "🍔", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/RedMeatBurger.jpg?width=640" },
+        { name: "שווארמה חצי חצי", desc: "שווארמה בפיתה או בלאפה — מנות גדולות", rating: 0, address: "רח׳ יהושע חנקין, עפולה", icon: "🌯", price: "₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/2015-12-31_-_shawarma_-_1.jpg?width=640" },
+        { name: "הסביח", desc: "סביחייה אגדית — פיתה חמה עם חציל ועמבה", rating: 0, address: "השוק 24, עפולה", phone: "04-6961830", icon: "🥙", price: "₪", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Sabich_Tel_Aviv.jpg?width=640" },
+        { name: "פלאפל התחנה", desc: "פלאפל טרי בפיתה עם סלטים — קלאסיקה עפולאית", rating: 0, address: "ליד התחנה המרכזית, עפולה", icon: "🧆", price: "₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Falafels.jpg?width=640" },
+        { name: "אסתריקה", desc: "אוכל ביתי בשרי — עלי גפן, קובה ומנות מזרחיות", rating: 0, address: "התוכנה 4, אזה״ת עפולה", icon: "🍖", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Stuffed_grape_leaves.jpg?width=640" },
+        { name: "שינווה נקניקיות", desc: "נקניקיות מעושנות ביתיות — מוסד עפולאי ותיק", rating: 0, address: "השוק, עפולה", icon: "🌭", price: "₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Bratwurst.jpg?width=640" },
         { name: "🧀 חלבי", _sub: true },
-        { name: "הצרפתיה הקטנה", desc: "מסעדה חלבית ותיקה — פסטות, ארוחות בוקר ואווירה כפרית", rating: 0, address: "שפרינצק 5, עפולה", phone: "04-6526516", icon: "🍽️", price: "₪₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_bolognese2.jpg/640px-Spaghetti_bolognese2.jpg" },
-        { name: "דה ויטו", desc: "מסעדה איטלקית חלבית — פיצות, פסטות וסלטים", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "04-6425858", icon: "🍕", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg/640px-Eq_it-na_pizza-margherita_sep2005_sml.jpg" },
-        { name: "סמוראיו — סושי בר", desc: "מסעדה יפנית כשרה עם סושי ומנות אסייתיות", rating: 0, address: "הנשיא ויצמן 25, עפולה", phone: "053-6285296", icon: "🍣", price: "₪₪₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sushi_platter.jpg/640px-Sushi_platter.jpg" },
-        { name: "דומינו׳ס פיצה", desc: "פיצות, לחם שום ותוספות — משלוחים מהירים", rating: 0, address: "שד׳ יצחק רבין 20, עפולה", icon: "🍕", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_pizza.jpg/640px-Supreme_pizza.jpg" },
-        { name: "מקלות וניל", desc: "קונדיטוריה עם פסטות, סלטים, פיצות וארוחות חלביות", rating: 0, address: "יהושע חנקין 9, עפולה", phone: "04-6420222", icon: "🥗", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Caesar_salad_%281%29.jpg/640px-Caesar_salad_%281%29.jpg" },
-        { name: "לנדוור", desc: "שקשוקות, סלטים, פסטות וארוחות חלביות", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "053-9380603", icon: "🥘", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Shakshuka.jpg/640px-Shakshuka.jpg" },
+        { name: "הצרפתיה הקטנה", desc: "מסעדה חלבית ותיקה — פסטות, ארוחות בוקר ואווירה כפרית", rating: 0, address: "שפרינצק 5, עפולה", phone: "04-6526516", icon: "🍽️", price: "₪₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Spaghetti_bolognese2.jpg?width=640" },
+        { name: "דה ויטו", desc: "מסעדה איטלקית חלבית — פיצות, פסטות וסלטים", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "04-6425858", icon: "🍕", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Eq_it-na_pizza-margherita_sep2005_sml.jpg?width=640" },
+        { name: "סמוראיו — סושי בר", desc: "מסעדה יפנית כשרה עם סושי ומנות אסייתיות", rating: 0, address: "הנשיא ויצמן 25, עפולה", phone: "053-6285296", icon: "🍣", price: "₪₪₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Sushi_platter.jpg?width=640" },
+        { name: "דומינו׳ס פיצה", desc: "פיצות, לחם שום ותוספות — משלוחים מהירים", rating: 0, address: "שד׳ יצחק רבין 20, עפולה", icon: "🍕", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Supreme_pizza.jpg?width=640" },
+        { name: "מקלות וניל", desc: "קונדיטוריה עם פסטות, סלטים, פיצות וארוחות חלביות", rating: 0, address: "יהושע חנקין 9, עפולה", phone: "04-6420222", icon: "🥗", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Caesar_salad_(1).jpg?width=640" },
+        { name: "לנדוור", desc: "שקשוקות, סלטים, פסטות וארוחות חלביות", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "053-9380603", icon: "🥘", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Shakshuka.jpg?width=640" },
         { name: "🥬 פרווה / טבעוני", _sub: true },
-        { name: "חצ׳פורי נטלי", desc: "חצ׳פורי גיאורגי ביתי — מאפים טריים מדי יום", rating: 0, address: "השוק 3, עפולה", icon: "🥟", price: "₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Khachapuri.jpg/640px-Khachapuri.jpg" },
-        { name: "חומוס השוק", desc: "חומוס טרי עם פול, טחינה ותוספות — ארוחה מהירה", rating: 0, address: "השוק, עפולה", icon: "🫘", price: "₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Hummus_from_The_Old_City.jpg/640px-Hummus_from_The_Old_City.jpg" },
+        { name: "חצ׳פורי נטלי", desc: "חצ׳פורי גיאורגי ביתי — מאפים טריים מדי יום", rating: 0, address: "השוק 3, עפולה", icon: "🥟", price: "₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Khachapuri.jpg?width=640" },
+        { name: "חומוס השוק", desc: "חומוס טרי עם פול, טחינה ותוספות — ארוחה מהירה", rating: 0, address: "השוק, עפולה", icon: "🫘", price: "₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Hummus_from_The_Old_City.jpg?width=640" },
       ],
       cafes: [
-        { name: "מקלות וניל", desc: "קונדיטוריה, מאפייה ובית קפה — מאפים, לחמים וארוחות בוקר", rating: 0, address: "יהושע חנקין 9, עפולה", phone: "04-6420222", icon: "☕", price: "₪₪", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/640px-A_small_cup_of_coffee.JPG" },
-        { name: "לנדוור", desc: "רשת בתי קפה ותיקה — ארוחות בוקר, קפה ומאפים", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "053-9380603", icon: "☕", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Latte_art.jpg/640px-Latte_art.jpg" },
-        { name: "הצרפתיה הקטנה", desc: "בית קפה-מסעדה עם ארוחות בוקר עשירות ואווירה כפרית", rating: 0, address: "שפרינצק 5, עפולה", phone: "04-6526516", icon: "🥐", price: "₪₪₪", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Croissant%2C_half-eaten.jpg/640px-Croissant%2C_half-eaten.jpg" },
-        { name: "דה ויטו — בוקר", desc: "ארוחת בוקר איטלקית עם שקשוקה, גבינות ומאפים", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "04-6425858", icon: "🍳", price: "₪₪", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Shakshuka.jpg/640px-Shakshuka.jpg" },
+        { name: "מקלות וניל", desc: "קונדיטוריה, מאפייה ובית קפה — מאפים, לחמים וארוחות בוקר", rating: 0, address: "יהושע חנקין 9, עפולה", phone: "04-6420222", icon: "☕", price: "₪₪", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/A_small_cup_of_coffee.JPG?width=640" },
+        { name: "לנדוור", desc: "רשת בתי קפה ותיקה — ארוחות בוקר, קפה ומאפים", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "053-9380603", icon: "☕", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Latte_art.jpg?width=640" },
+        { name: "הצרפתיה הקטנה", desc: "בית קפה-מסעדה עם ארוחות בוקר עשירות ואווירה כפרית", rating: 0, address: "שפרינצק 5, עפולה", phone: "04-6526516", icon: "🥐", price: "₪₪₪", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Croissant.jpg?width=640" },
+        { name: "דה ויטו — בוקר", desc: "ארוחת בוקר איטלקית עם שקשוקה, גבינות ומאפים", rating: 0, address: "שד׳ יצחק רבין 18, מתחם G, עפולה", phone: "04-6425858", icon: "🍳", price: "₪₪", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Shakshuka.jpg?width=640" },
       ],
       bars: [
-        { name: "השוק 34", desc: "בר קוקטיילים ומעשנה בלב השוק", rating: 0, address: "השוק 34, עפולה", icon: "🍸", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Cosmopolitan_cocktail.jpg/640px-Cosmopolitan_cocktail.jpg" },
-        { name: "יולה בר", desc: "בר עם במה פתוחה, ג׳אם סשנים ומוזיקה חיה", rating: 0, address: "החשמל 1, עפולה", icon: "🎵", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/GuitareClassique5.png/640px-GuitareClassique5.png" },
-        { name: "פאב השוק", desc: "פאב משפחתי — בירות, חדרי VIP ונשנושים", rating: 0, address: "השוק 32, עפולה", icon: "🍺", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Bierglaeser.jpg/640px-Bierglaeser.jpg" },
-        { name: "ליצ׳י ביסטרו בר", desc: "ביסטרו-בר מודרני — קוקטיילים ואוכל", rating: 0, address: "שד׳ יצחק רבין, מתחם G, עפולה", icon: "🍹", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Cosmopolitan_cocktail.jpg/640px-Cosmopolitan_cocktail.jpg" },
-        { name: "BBB — בר", desc: "המבורגרים ובירות באווירה צעירה", rating: 0, address: "מתחם פרנדלי בעמק, עפולה", phone: "04-6424446", icon: "🍻", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/RedMeatBurger.jpg/640px-RedMeatBurger.jpg" },
+        { name: "השוק 34", desc: "בר קוקטיילים ומעשנה בלב השוק", rating: 0, address: "השוק 34, עפולה", icon: "🍸", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Cosmopolitan_cocktail.jpg?width=640" },
+        { name: "יולה בר", desc: "בר עם במה פתוחה, ג׳אם סשנים ומוזיקה חיה", rating: 0, address: "החשמל 1, עפולה", icon: "🎵", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/GuitareClassique5.png?width=640" },
+        { name: "פאב השוק", desc: "פאב משפחתי — בירות, חדרי VIP ונשנושים", rating: 0, address: "השוק 32, עפולה", icon: "🍺", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Pils_large.jpg?width=640" },
+        { name: "ליצ׳י ביסטרו בר", desc: "ביסטרו-בר מודרני — קוקטיילים ואוכל", rating: 0, address: "שד׳ יצחק רבין, מתחם G, עפולה", icon: "🍹", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Cocktails.jpg?width=640" },
+        { name: "BBB — בר", desc: "המבורגרים ובירות באווירה צעירה", rating: 0, address: "מתחם פרנדלי בעמק, עפולה", phone: "04-6424446", icon: "🍻", img: "https://commons.wikimedia.org/wiki/Special:FilePath/RedMeatBurger.jpg?width=640" },
       ],
       malls: [
-        { name: "מתחם G עמק סנטר", desc: "מתחם קניות מרכזי עם רשתות אופנה, חנויות ומסעדות", rating: 0, address: "שד׳ יצחק רבין 18, עפולה", phone: "04-6401082", icon: "🏬", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Interior_of_a_shopping_mall.jpg/640px-Interior_of_a_shopping_mall.jpg" },
-        { name: "BIG עפולה", desc: "מרכז מסחרי גדול עם חנויות ושירותים", rating: 0, address: "השוק 13, עפולה", icon: "🛍️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Storefront.jpg/640px-Storefront.jpg" },
-        { name: "קניון פרנדלי בעמק", desc: "קניון עם חנויות אופנה, מזון ובידור", rating: 0, address: "שד׳ יצחק רבין 18, עפולה", icon: "🛒", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Shopping_mall_in_Tbilisi.jpg/640px-Shopping_mall_in_Tbilisi.jpg" },
+        { name: "מתחם G עמק סנטר", desc: "מתחם קניות מרכזי עם רשתות אופנה, חנויות ומסעדות", rating: 0, address: "שד׳ יצחק רבין 18, עפולה", phone: "04-6401082", icon: "🏬", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Westfield_London_-_panoramio_(8).jpg?width=640" },
+        { name: "BIG עפולה", desc: "מרכז מסחרי גדול עם חנויות ושירותים", rating: 0, address: "השוק 13, עפולה", icon: "🛍️", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Storefront.jpg?width=640" },
+        { name: "קניון פרנדלי בעמק", desc: "קניון עם חנויות אופנה, מזון ובידור", rating: 0, address: "שד׳ יצחק רבין 18, עפולה", icon: "🛒", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Storefront.jpg?width=640" },
       ],
       coffeeSpots: [
-        { name: "גבעת המורה — תצפית", desc: "נקודת תצפית מרהיבה עם שולחנות פיקניק — מושלם לשקיעה", rating: 0, address: "גבעת המורה, עפולה", icon: "🌄", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Jezreel_Valley_view.jpg" },
-        { name: "עין גדעון", desc: "מעיין עתיק מוקף ירוק — שקט ומוצל", rating: 0, address: "ליד כפר גדעון, צפונית לעפולה", icon: "🌿", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Ein_Harod.JPG/640px-Ein_Harod.JPG" },
-        { name: "נחל חרוד — פיקניק", desc: "גדות הנחל עם צל עצים — אידיאלי לפק״ל בוקר", rating: 0, address: "נחל חרוד, מזרחית לעפולה", icon: "🏕️", trending: true, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Nahal_Harod.JPG/640px-Nahal_Harod.JPG" },
-        { name: "פארק חי העמק — פינת יער", desc: "פינות ישיבה מוצלות בין העצים — נגיש", rating: 0, address: "פארק חי העמק, עפולה", icon: "☕", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Gilboa_mountains_and_Jezreel_valley.JPG/640px-Gilboa_mountains_and_Jezreel_valley.JPG" },
-        { name: "הר תבור — חניון עליון", desc: "נוף 360° מהפסגה — שווה את העלייה", rating: 0, address: "הר תבור (כ-15 דק׳ מעפולה)", icon: "⛰️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Mt._Tabor_Israel.JPG/640px-Mt._Tabor_Israel.JPG" },
+        { name: "גבעת המורה — תצפית", desc: "נקודת תצפית מרהיבה עם שולחנות פיקניק — מושלם לשקיעה", rating: 0, address: "גבעת המורה, עפולה", icon: "🌄", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Jezreel_Valley_view.jpg?width=640" },
+        { name: "עין גדעון", desc: "מעיין עתיק מוקף ירוק — שקט ומוצל", rating: 0, address: "ליד כפר גדעון, צפונית לעפולה", icon: "🌿", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ein_Harod.JPG?width=640" },
+        { name: "נחל חרוד — פיקניק", desc: "גדות הנחל עם צל עצים — אידיאלי לפק״ל בוקר", rating: 0, address: "נחל חרוד, מזרחית לעפולה", icon: "🏕️", trending: true, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Nahal_Harod.JPG?width=640" },
+        { name: "פארק חי העמק — פינת יער", desc: "פינות ישיבה מוצלות בין העצים — נגיש", rating: 0, address: "פארק חי העמק, עפולה", icon: "☕", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gilboa_mountains_and_Jezreel_valley.JPG?width=640" },
+        { name: "הר תבור — חניון עליון", desc: "נוף 360° מהפסגה — שווה את העלייה", rating: 0, address: "הר תבור (כ-15 דק׳ מעפולה)", icon: "⛰️", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Mt._Tabor_Israel.JPG?width=640" },
       ],
       culture: [
-        { name: "היכל התרבות עפולה", desc: "אולם מופעים מרכזי — הופעות, הצגות ומוזיקה", rating: 0, address: "חטיבה תשע 9, עפולה", phone: "04-6595797", icon: "🎭", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Theater_mask.jpg/640px-Theater_mask.jpg" },
-        { name: "תחנת הרכבת העות׳מאנית", desc: "אתר היסטורי משוקם מתקופת רכבת העמק", rating: 0, address: "רח׳ הנשיא ויצמן, עפולה", icon: "🏛️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Afula_station.jpg/640px-Afula_station.jpg" },
+        { name: "היכל התרבות עפולה", desc: "אולם מופעים מרכזי — הופעות, הצגות ומוזיקה", rating: 0, address: "חטיבה תשע 9, עפולה", phone: "04-6595797", icon: "🎭", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Comedy_and_tragedy_masks_without_background.svg?width=640" },
+        { name: "תחנת הרכבת העות׳מאנית", desc: "אתר היסטורי משוקם מתקופת רכבת העמק", rating: 0, address: "רח׳ הנשיא ויצמן, עפולה", icon: "🏛️", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Afula_station.jpg?width=640" },
       ],
       professionals: [
         { name: "חשמלאי העמק", desc: "חשמלאי מוסמך — שירות מהיר באזור עפולה", rating: 0, address: "שירות בכל אזור עפולה", phone: "050-1234567", icon: "⚡", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Electrician_at_work.jpg?width=640" },
         { name: "שרברב עפולה 24/7", desc: "שרברב מקצועי — פתיחת סתימות ותיקון צנרת", rating: 0, address: "שירות ניידים, עפולה", phone: "052-4445566", icon: "🔧", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Plumber_at_work.jpg?width=640" },
-        { name: "מוסך העמק", desc: "מוסך מורשה לכל סוגי הרכבים", rating: 0, address: "אזור התעשייה, עפולה", phone: "04-6523456", icon: "🚗", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Auto_mechanic_workshop.jpg?width=640" },
+        { name: "מוסך העמק", desc: "מוסך מורשה לכל סוגי הרכבים", rating: 0, address: "אזור התעשייה, עפולה", phone: "04-6523456", icon: "🚗", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Mechanic_in_overalls.jpg?width=640" },
       ],
     },
   };
@@ -204,7 +204,7 @@ function Modal({ p, cat, close, favs, toggle, T }) {
   const hasImg = p.img && !imgErr;
   return (
     <div style={{ position:"fixed",inset:0,background:"rgba(30,20,15,.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(8px)" }} onClick={close}>
-      <div onClick={e=>e.stopPropagation()} style={{ background:T.surface,borderRadius:20,maxWidth:480,width:"100%",maxHeight:"85vh",overflow:"auto",animation:"modalIn .3s ease",boxShadow:"0 24px 64px rgba(0,0,0,.2)" }}>
+      <div onClick={e=>e.stopPropagation()} style={{ background:T.surface,borderRadius:20,maxWidth:480,width:"100%",maxHeight:"85vh",overflow:"auto",animation:"modalIn .3s ease",boxShadow:"0 24px 64px rgba(0,0,0,.2)",position:"relative" }}>
         <div style={{ height: hasImg ? 200 : 140, display:"flex",alignItems:"center",justifyContent:"center",background: hasImg ? "#F3EDE8" : `linear-gradient(135deg,${cc}15,${cc}05)`,position:"relative",overflow:"hidden" }}>
           {hasImg ? (
             <img src={p.img} alt={p.name} onError={()=>setImgErr(true)} style={{ width:"100%",height:"100%",objectFit:"cover" }}/>
@@ -212,9 +212,9 @@ function Modal({ p, cat, close, favs, toggle, T }) {
             <span style={{ fontSize:64, lineHeight: 1, display: "block" }}>{p.icon}</span>
           )}
           {hasImg && <div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 40%, rgba(0,0,0,0.45))" }}/>}
-          <button onClick={close} style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)" }}><X size={16} strokeWidth={2.5}/></button>
-          <button onClick={()=>toggle(p.name)} style={{ position:"absolute",top:14,right:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)" }}><Heart size={16} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"}/></button>
+          <button onClick={()=>toggle(p.name)} style={{ position:"absolute",top:14,right:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)",zIndex:2 }}><Heart size={16} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"}/></button>
         </div>
+        <button onClick={close} style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.95)",border:"none",borderRadius:"50%",width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 10px rgba(0,0,0,.15)",zIndex:10 }}><X size={17} strokeWidth={2.5}/></button>
         <div style={{ padding:"20px 22px 24px" }}>
           <h2 style={{ margin:"0 0 8px",fontSize:20,fontWeight:800,color:T.text }}>{p.name}</h2>
           <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14,flexWrap:"wrap" }}>
@@ -387,10 +387,15 @@ export default function App() {
     @keyframes badgeIn{from{opacity:0;transform:scale(.8) translateY(8px)}to{opacity:1;transform:none}}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     svg{shape-rendering:geometricPrecision}
-    @media(max-width:480px){
+    @media(max-width:600px){
       .hero-logo{width:72px!important;height:72px!important}
       .profile-pic{width:68px!important;height:68px!important}
       .login-logo{width:160px!important;height:160px!important}
+      .hero-content{padding:70px 16px 40px!important}
+      .hero-content p{font-size:14px!important}
+      .cat-nav-inner{padding:0 8px!important}
+      .main-content{padding:16px 12px 0!important}
+      .top-bar{padding:12px 12px!important}
     }
     ::-webkit-scrollbar{width:5px;height:5px}
     ::-webkit-scrollbar-thumb{background:#C4D5E8;border-radius:10px}
@@ -524,7 +529,7 @@ export default function App() {
         <div style={{ position:"absolute",bottom:0,left:0,right:0,height:80,background:`linear-gradient(to top, ${T.bg}, transparent)` }}/>
 
         {/* ── Top bar ── */}
-        <div style={{ position:"absolute",top:0,left:0,right:0,zIndex:10,display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"16px 24px",pointerEvents:"none" }}>
+        <div className="top-bar" style={{ position:"absolute",top:0,left:0,right:0,zIndex:10,display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"16px 24px",pointerEvents:"none" }}>
           {/* Left: Logo + Settings & Favorites below */}
           <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:10,pointerEvents:"auto" }}>
             <img src="/logo.png" alt="AfulaGo" className="hero-logo" style={{ width:130,height:130,objectFit:"cover",borderRadius:"50%",border:"3px solid rgba(255,255,255,.7)",boxShadow:"0 4px 20px rgba(0,0,0,.3)",flexShrink:0 }}/>
@@ -596,7 +601,7 @@ export default function App() {
         </div>
 
         {/* ── Centered content ── */}
-        <div style={{ position:"relative",zIndex:2,padding:"100px 48px 56px",maxWidth:700,margin:"0 auto",textAlign:"center" }}>
+        <div className="hero-content" style={{ position:"relative",zIndex:2,padding:"100px 48px 56px",maxWidth:700,margin:"0 auto",textAlign:"center" }}>
           <div style={{ animation:"heroIn .7s ease both" }}>
             <p style={{ color:"rgba(255,255,255,.85)",margin:"0 0 28px",fontSize:17,fontWeight:400,lineHeight:1.8 }}>מסעדות, אטרקציות, בילויים ועוד — הכל על עפולה במקום אחד</p>
 
@@ -634,7 +639,7 @@ export default function App() {
 
       {/* ── Category nav ── */}
       <div style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
-        <div style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
+        <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
           <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1 }}>
             {[{k:"all",label:"הכל",Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
@@ -649,7 +654,7 @@ export default function App() {
       </div>
 
 
-      <div style={{ maxWidth:1400,margin:"0 auto",padding:"28px 48px 0" }}>
+      <div className="main-content" style={{ maxWidth:1400,margin:"0 auto",padding:"28px 48px 0" }}>
 
         {trending.length>0&&activeCat==="all"&&!fOnly&&(
           <div style={{ marginBottom:40 }}>
