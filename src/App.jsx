@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { Search, MapPin, Star, Heart, Phone, Clock, ChevronLeft, Filter, TrendingUp, Calendar, Utensils, TreePine, ShoppingBag, Landmark, Wrench, Wine, Sun, Moon, BookOpen, Award, X, Sparkles, Info, Settings, LogOut, User, Plus } from "lucide-react";
 
 /* ═══════════════════════════════════════
@@ -201,10 +201,16 @@ function Modal({ p, cat, close, favs, toggle, T }) {
   if (!p) return null;
   const f = favs.has(p.name), cc = CATS[cat]?.color||"#888";
   const [imgErr, setImgErr] = useState(false);
+  useEffect(() => {
+    const sb = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingLeft = `${sb}px`;
+    return () => { document.body.style.overflow = ""; document.body.style.paddingLeft = ""; };
+  }, []);
   const hasImg = p.img && !imgErr;
   return (
-    <div style={{ position:"fixed",inset:0,background:"rgba(30,20,15,.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(8px)" }} onClick={close}>
-      <div onClick={e=>e.stopPropagation()} style={{ background:T.surface,borderRadius:20,maxWidth:480,width:"100%",maxHeight:"85vh",overflow:"auto",animation:"modalIn .3s ease",boxShadow:"0 24px 64px rgba(0,0,0,.2)",position:"relative" }}>
+    <div role="presentation" style={{ position:"fixed",inset:0,background:"rgba(30,20,15,.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(8px)" }} onClick={close}>
+      <div role="dialog" aria-modal="true" aria-label={p.name} onClick={e=>e.stopPropagation()} style={{ background:T.surface,borderRadius:20,maxWidth:480,width:"100%",maxHeight:"85vh",overflow:"auto",animation:"modalIn .3s ease",boxShadow:"0 24px 64px rgba(0,0,0,.2)",position:"relative" }}>
         <div style={{ height: hasImg ? 200 : 140, display:"flex",alignItems:"center",justifyContent:"center",background: hasImg ? "#F3EDE8" : `linear-gradient(135deg,${cc}15,${cc}05)`,position:"relative",overflow:"hidden" }}>
           {hasImg ? (
             <img src={p.img} alt={p.name} onError={()=>setImgErr(true)} style={{ width:"100%",height:"100%",objectFit:"cover" }}/>
@@ -212,9 +218,9 @@ function Modal({ p, cat, close, favs, toggle, T }) {
             <span style={{ fontSize:64, lineHeight: 1, display: "block" }}>{p.icon}</span>
           )}
           {hasImg && <div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 40%, rgba(0,0,0,0.45))" }}/>}
-          <button onClick={()=>toggle(p.name)} style={{ position:"absolute",top:14,right:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)",zIndex:2 }}><Heart size={16} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"}/></button>
+          <button onClick={()=>toggle(p.name)} aria-label={f?"הסר ממועדפים":"הוסף למועדפים"} aria-pressed={f} style={{ position:"absolute",top:14,right:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)",zIndex:2 }}><Heart size={16} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"} aria-hidden="true"/></button>
         </div>
-        <button onClick={close} style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.95)",border:"none",borderRadius:"50%",width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 10px rgba(0,0,0,.15)",zIndex:10 }}><X size={17} strokeWidth={2.5}/></button>
+        <button onClick={close} aria-label="סגור" style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.95)",border:"none",borderRadius:"50%",width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 10px rgba(0,0,0,.15)",zIndex:10 }}><X size={17} strokeWidth={2.5} aria-hidden="true"/></button>
         <div style={{ padding:"20px 22px 24px" }}>
           <h2 style={{ margin:"0 0 8px",fontSize:20,fontWeight:800,color:T.text }}>{p.name}</h2>
           <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14,flexWrap:"wrap" }}>
@@ -303,6 +309,23 @@ export default function App() {
   const [authErr, setAuthErr] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [a11yOpen, setA11yOpen] = useState(false);
+  const [a11yHighContrast, setA11yHighContrast] = useState(false);
+  const [a11yLargeText, setA11yLargeText] = useState(false);
+  const [a11yGrayscale, setA11yGrayscale] = useState(false);
+  const [a11yUnderlineLinks, setA11yUnderlineLinks] = useState(false);
+
+  useEffect(() => { document.body.classList.toggle("high-contrast", a11yHighContrast); }, [a11yHighContrast]);
+  useEffect(() => { document.body.classList.toggle("large-text", a11yLargeText); }, [a11yLargeText]);
+  useEffect(() => { document.body.classList.toggle("grayscale-mode", a11yGrayscale); }, [a11yGrayscale]);
+  useEffect(() => { document.body.classList.toggle("underline-links", a11yUnderlineLinks); }, [a11yUnderlineLinks]);
+
+  useEffect(() => {
+    if (!settingsOpen && !a11yOpen) return;
+    const close = () => { setSettingsOpen(false); setA11yOpen(false); };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [settingsOpen, a11yOpen]);
 
   const handleSignUp = async () => {
     if (!regForm.name || !regForm.email || !regForm.password) return;
@@ -405,6 +428,29 @@ export default function App() {
     button{-webkit-tap-highlight-color:transparent;font-family:'Rubik',sans-serif}
     .cat-scroll::-webkit-scrollbar{display:none}
     .cat-scroll{-ms-overflow-style:none;scrollbar-width:none}
+    *:focus-visible{outline:3px solid #1a6abf;outline-offset:3px;border-radius:4px}
+    .skip-link{position:absolute;top:-999px;right:0;background:#1a6abf;color:#fff;padding:10px 18px;font-size:15px;font-weight:700;border-radius:0 0 8px 8px;z-index:9999;text-decoration:none;font-family:'Rubik',sans-serif}
+    .skip-link:focus{top:0}
+    .a11y-fab{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);transition:background .2s}
+    .a11y-fab:hover{background:rgba(255,255,255,.35)}
+    @keyframes a11yIn{from{opacity:0;transform:translate(-50%,-50%) scale(.95)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+    .a11y-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9200;background:#fff;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.25);padding:20px 18px 14px;width:280px;animation:a11yIn .2s ease;font-family:'Rubik',sans-serif}
+    .a11y-panel-title{font-size:14px;font-weight:800;color:#1A1A1A;margin:0 0 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #F0F0F0;padding-bottom:10px}
+    .a11y-option{display:flex;align-items:center;justify-content:space-between;padding:9px 4px;border-bottom:1px solid #F7F7F7;cursor:pointer;border-radius:8px;transition:background .12s}
+    .a11y-option:last-child{border-bottom:none}
+    .a11y-option:hover{background:#F3F8FF}
+    .a11y-option-label{font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:8px}
+    .a11y-toggle{width:38px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+    .a11y-toggle::after{content:'';position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+    .a11y-toggle[aria-checked="true"]{background:#1a6abf}
+    .a11y-toggle[aria-checked="true"]::after{transform:translateX(-16px)}
+    .a11y-toggle[aria-checked="false"]{background:#D1D5DB}
+    .a11y-reset{width:100%;margin-top:12px;padding:9px;background:#F3F8FF;border:1.5px solid #BFDBFE;border-radius:10px;color:#1a6abf;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Rubik',sans-serif}
+    .a11y-reset:hover{background:#DBEAFE}
+    body.high-contrast{filter:contrast(1.5) saturate(0.7)}
+    body.large-text{font-size:110%!important}
+    body.grayscale-mode{filter:grayscale(1)}
+    body.underline-links a,body.underline-links [role="link"],body.underline-links [role="button"]{text-decoration:underline!important;text-underline-offset:3px}
   `;
 
   // ─── REGISTRATION PAGE ───
@@ -431,10 +477,19 @@ export default function App() {
 
               <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
                 {page==="register"&&(
-                  <input value={regForm.name} onChange={e=>setRegForm({...regForm,name:e.target.value})} placeholder="שם מלא" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                  <label style={{ display:"flex",flexDirection:"column",gap:5 }}>
+                    <span style={{ fontSize:13,fontWeight:600,color:"#374151" }}>שם מלא</span>
+                    <input aria-label="שם מלא" value={regForm.name} onChange={e=>setRegForm({...regForm,name:e.target.value})} placeholder="שם מלא" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                  </label>
                 )}
-                <input value={regForm.email} onChange={e=>setRegForm({...regForm,email:e.target.value})} placeholder="אימייל" type="email" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
-                <input value={regForm.password} onChange={e=>setRegForm({...regForm,password:e.target.value})} placeholder="סיסמה (לפחות 6 תווים)" type="password" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                <label style={{ display:"flex",flexDirection:"column",gap:5 }}>
+                  <span style={{ fontSize:13,fontWeight:600,color:"#374151" }}>אימייל</span>
+                  <input aria-label="אימייל" value={regForm.email} onChange={e=>setRegForm({...regForm,email:e.target.value})} placeholder="אימייל" type="email" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                </label>
+                <label style={{ display:"flex",flexDirection:"column",gap:5 }}>
+                  <span style={{ fontSize:13,fontWeight:600,color:"#374151" }}>סיסמה</span>
+                  <input aria-label="סיסמה, לפחות 6 תווים" value={regForm.password} onChange={e=>setRegForm({...regForm,password:e.target.value})} placeholder="סיסמה (לפחות 6 תווים)" type="password" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
+                </label>
 
                 <button onClick={page==="login"?handleSignIn:handleSignUp} disabled={authLoading} style={{ width:"100%",padding:"16px",background:"linear-gradient(135deg, #2d7720, #1a6abf)",color:"#fff",border:"none",borderRadius:14,fontSize:17,fontWeight:700,fontFamily:"'Rubik'",cursor:authLoading?"default":"pointer",opacity:authLoading?.6:1,transition:"all .2s",marginTop:4 }}>
                   {authLoading?"⏳":page==="login"?"התחברות":"הרשמה"}
@@ -483,6 +538,11 @@ export default function App() {
   return (
     <div dir="rtl" style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s" }}>
       <style>{css}</style>
+
+      {/* ── Skip link ── */}
+      <a href="#main-content" className="skip-link">דלג לתוכן הראשי</a>
+
+
       {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog} T={T}/>}
 
       {/* ── Add Place Modal ── */}
@@ -535,13 +595,13 @@ export default function App() {
             <img src="/logo.png" alt="AfulaGo" className="hero-logo" style={{ width:130,height:130,objectFit:"cover",borderRadius:"50%",border:"3px solid rgba(255,255,255,.7)",boxShadow:"0 4px 20px rgba(0,0,0,.3)",flexShrink:0 }}/>
             <div style={{ display:"flex",alignItems:"center",gap:8 }}>
               <div style={{ position:"relative" }}>
-                <button onClick={()=>setSettingsOpen(o=>!o)} style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
+                <button onClick={e=>{e.stopPropagation();setSettingsOpen(o=>!o);}} aria-label="הגדרות" aria-expanded={settingsOpen} aria-haspopup="true" style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
                   onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.35)"}
                   onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.2)"}>
-                  <Settings size={18} color="#fff"/>
+                  <Settings size={18} color="#fff" aria-hidden="true"/>
                 </button>
                 {settingsOpen && (
-                  <div style={{ position:"absolute",top:52,right:0,background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.15)",minWidth:200,overflow:"hidden",animation:"modalIn .2s ease" }}>
+                  <div onClick={e=>e.stopPropagation()} style={{ position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.2)",minWidth:220,overflow:"hidden",animation:"a11yIn .2s ease",whiteSpace:"nowrap",zIndex:9200 }}>
                     <div style={{ padding:"12px 16px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:10 }}>
                       <User size={15} color="#2d7720"/>
                       <span style={{ fontSize:13,fontWeight:700,color:T.text }}>{regForm.name || user?.user_metadata?.name || "אורח"}</span>
@@ -560,11 +620,46 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <button onClick={()=>{setFOnly(o=>!o);setSettingsOpen(false);}} style={{ background:fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
+              <button onClick={()=>{setFOnly(o=>!o);setSettingsOpen(false);}} aria-label={fOnly?"הצג את כל המקומות":"הצג מועדפים בלבד"} aria-pressed={fOnly} style={{ background:fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
                 onMouseEnter={e=>e.currentTarget.style.background=fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.35)"}
                 onMouseLeave={e=>e.currentTarget.style.background=fOnly?"rgba(255,255,255,.9)":"rgba(255,255,255,.2)"}>
                 <Heart size={18} fill={fOnly?"#E8613C":"none"} color={fOnly?"#E8613C":"#fff"}/>
               </button>
+
+              {/* ── Accessibility widget ── */}
+              <div style={{ position:"relative" }} role="region" aria-label="כלי נגישות">
+                <button
+                  className="a11y-fab"
+                  aria-label={a11yOpen ? "סגור תפריט נגישות" : "פתח תפריט נגישות"}
+                  aria-expanded={a11yOpen}
+                  aria-haspopup="dialog"
+                  onClick={e=>{e.stopPropagation();setA11yOpen(v=>!v);}}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="4" r="1.5"/>
+                    <path d="M12 6v6l-3 5M12 12l3 5M7 9h10"/>
+                  </svg>
+                </button>
+                {a11yOpen && (
+                  <div className="a11y-panel" role="dialog" aria-label="תפריט נגישות" aria-modal="false" onClick={e=>e.stopPropagation()}>
+                    <p className="a11y-panel-title"><span aria-hidden="true">♿</span> נגישות</p>
+                    {[
+                      { label:"ניגודיות גבוהה", icon:"🔆", val:a11yHighContrast,    set:setA11yHighContrast },
+                      { label:"טקסט גדול",      icon:"🔠", val:a11yLargeText,       set:setA11yLargeText },
+                      { label:"גווני אפור",     icon:"🎨", val:a11yGrayscale,       set:setA11yGrayscale },
+                      { label:"הדגשת קישורים", icon:"🔗", val:a11yUnderlineLinks,   set:setA11yUnderlineLinks },
+                    ].map(({label,icon,val,set})=>(
+                      <div key={label} className="a11y-option" onClick={()=>set(v=>!v)}>
+                        <span className="a11y-option-label"><span aria-hidden="true">{icon}</span>{label}</span>
+                        <button className="a11y-toggle" role="switch" aria-checked={val} aria-label={label} onClick={e=>{e.stopPropagation();set(v=>!v)}}/>
+                      </div>
+                    ))}
+                    <button className="a11y-reset" onClick={()=>{setA11yHighContrast(false);setA11yLargeText(false);setA11yGrayscale(false);setA11yUnderlineLinks(false);}}>
+                      איפוס הגדרות
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -607,8 +702,12 @@ export default function App() {
 
             {/* Search bar */}
             <div style={{ maxWidth:520,margin:"0 auto 24px",position:"relative" }}>
-              <Search size={18} color="#94A3B8" style={{ position:"absolute",top:18,right:18,pointerEvents:"none",zIndex:1 }}/>
+              <Search size={18} color="#94A3B8" aria-hidden="true" style={{ position:"absolute",top:18,right:18,pointerEvents:"none",zIndex:1 }}/>
               <input
+                role="combobox"
+                aria-label="חיפוש מקומות, מסעדות ואטרקציות"
+                aria-expanded={showSug && suggestions.length > 0}
+                aria-autocomplete="list"
                 value={q}
                 onChange={e=>{ setQ(e.target.value); setShowSug(true); }}
                 onFocus={()=>setShowSug(true)}
@@ -638,23 +737,23 @@ export default function App() {
       </div>
 
       {/* ── Category nav ── */}
-      <div style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
+      <nav aria-label="קטגוריות" style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
           <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1 }}>
             {[{k:"all",label:"הכל",Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
-                <button key={k} onClick={()=>setAC(k)} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:30,border:"none",background:active?(color||T.accent):"transparent",color:active?"#fff":(color||T.textSoft),fontWeight:active?700:500,fontSize:13,cursor:"pointer",whiteSpace:"nowrap",transition:"all .2s",flexShrink:0,boxShadow:active?`0 4px 14px ${(color||T.accent)}40`:"none" }}>
-                  {Icon&&<Icon size={14}/>}{label}
+                <button key={k} onClick={()=>setAC(k)} aria-pressed={active} aria-label={`קטגוריה: ${label}`} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:30,border:"none",background:active?(color||T.accent):"transparent",color:active?"#fff":(color||T.textSoft),fontWeight:active?700:500,fontSize:13,cursor:"pointer",whiteSpace:"nowrap",transition:"all .2s",flexShrink:0,boxShadow:active?`0 4px 14px ${(color||T.accent)}40`:"none" }}>
+                  {Icon&&<Icon size={14} aria-hidden="true"/>}{label}
                 </button>
               );
             })}
           </div>
         </div>
-      </div>
+      </nav>
 
 
-      <div className="main-content" style={{ maxWidth:1400,margin:"0 auto",padding:"28px 48px 0" }}>
+      <main id="main-content" className="main-content" style={{ maxWidth:1400,margin:"0 auto",padding:"28px 48px 0" }}>
 
         {trending.length>0&&activeCat==="all"&&!fOnly&&(
           <div style={{ marginBottom:40 }}>
@@ -667,7 +766,7 @@ export default function App() {
               {trending.map((p,i)=>{
                 const cc=CATS[p._c]?.color||"#888";
                 return(
-                <div key={i} onClick={()=>{setModal(p);setMCat(p._c)}} style={{ minWidth:200,borderRadius:20,background:T.card,cursor:"pointer",transition:"all .25s",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.12:.06})`,flexShrink:0,overflow:"hidden",animation:`slideIn .4s ease ${i*.07}s both` }}
+                <div key={i} role="button" tabIndex={0} aria-label={p.name} onClick={()=>{setModal(p);setMCat(p._c)}} onKeyDown={e=>(e.key==="Enter"||e.key===" ")&&(setModal(p),setMCat(p._c))} style={{ minWidth:200,borderRadius:20,background:T.card,cursor:"pointer",transition:"all .25s",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.12:.06})`,flexShrink:0,overflow:"hidden",animation:`slideIn .4s ease ${i*.07}s both` }}
                   onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.boxShadow=`0 12px 32px ${cc}40`}}
                   onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.12:.06})`}}>
                   <div style={{ height:90,display:"flex",alignItems:"center",justifyContent:"center",background:`linear-gradient(135deg,${cc}22,${cc}0a)`,position:"relative" }}>
@@ -722,7 +821,7 @@ export default function App() {
                             const hasImg=p.img;
                             const f=favs.has(p.name);
                             return(
-                              <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
+                              <div key={i} role="button" tabIndex={0} aria-label={p.name} onClick={()=>{setModal(p);setMCat(cat)}} onKeyDown={e=>(e.key==="Enter"||e.key===" ")&&(setModal(p),setMCat(cat))} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                                 onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
                                 <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
                                   {hasImg ? (
@@ -735,8 +834,8 @@ export default function App() {
                                   )}
                                   {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                                   {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
-                                  <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
-                                    <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"}/>
+                                  <button onClick={e=>{e.stopPropagation();tog(p.name)}} aria-label={f?`הסר ${p.name} ממועדפים`:`הוסף ${p.name} למועדפים`} aria-pressed={f} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
+                                    <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"} aria-hidden="true"/>
                                   </button>
                                 </div>
                                 <div style={{ padding:"10px 12px 12px" }}>
@@ -788,7 +887,7 @@ export default function App() {
             });
           })()}
         </div>
-      </div>
+      </main>
 
       {/* ── About Afula — bottom of page ── */}
       <div style={{ background:T.pill,padding:"36px 24px",borderTop:`1px solid ${T.border}` }}>
