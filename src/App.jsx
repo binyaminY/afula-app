@@ -105,9 +105,9 @@ const generatePlaces = (cityName) => {
         { name: "תחנת הרכבת העות׳מאנית", desc: "אתר היסטורי משוקם מתקופת רכבת העמק", rating: 0, address: "רח׳ הנשיא ויצמן, עפולה", icon: "🏛️", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Afula_station.jpg/640px-Afula_station.jpg" },
       ],
       professionals: [
-        { name: "חשמלאי העמק", desc: "חשמלאי מוסמך — שירות מהיר באזור עפולה", rating: 0, address: "שירות בכל אזור עפולה", phone: "050-1234567", icon: "⚡" },
-        { name: "שרברב עפולה 24/7", desc: "שרברב מקצועי — פתיחת סתימות ותיקון צנרת", rating: 0, address: "שירות ניידים, עפולה", phone: "052-4445566", icon: "🔧" },
-        { name: "מוסך העמק", desc: "מוסך מורשה לכל סוגי הרכבים", rating: 0, address: "אזור התעשייה, עפולה", phone: "04-6523456", icon: "🚗" },
+        { name: "חשמלאי העמק", desc: "חשמלאי מוסמך — שירות מהיר באזור עפולה", rating: 0, address: "שירות בכל אזור עפולה", phone: "050-1234567", icon: "⚡", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Electrical_contractor.jpg/640px-Electrical_contractor.jpg" },
+        { name: "שרברב עפולה 24/7", desc: "שרברב מקצועי — פתיחת סתימות ותיקון צנרת", rating: 0, address: "שירות ניידים, עפולה", phone: "052-4445566", icon: "🔧", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Plumber_soldering.jpg/640px-Plumber_soldering.jpg" },
+        { name: "מוסך העמק", desc: "מוסך מורשה לכל סוגי הרכבים", rating: 0, address: "אזור התעשייה, עפולה", phone: "04-6523456", icon: "🚗", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Toyota_dealer_-_service_center.jpg/640px-Toyota_dealer_-_service_center.jpg" },
       ],
     },
   };
@@ -284,6 +284,7 @@ const sbSignIn = (email, password) =>
 export default function App() {
   const city = "עפולה";
   const [q, setQ] = useState("");
+  const [showSug, setShowSug] = useState(false);
   const [drop, setDrop] = useState(false);
   const [activeCat, setAC] = useState("all");
   const [favs, setFavs] = useState(new Set());
@@ -352,6 +353,21 @@ export default function App() {
 
   const tog = useCallback(n => setFavs(p => { const s = new Set(p); s.has(n)?s.delete(n):s.add(n); return s; }), []);
 
+  const suggestions = useMemo(() => {
+    if (!q.trim()) return [];
+    const ql = q.trim().toLowerCase();
+    const results = [];
+    Object.entries(places).forEach(([cat, items]) => {
+      items.forEach(p => {
+        if (p._sub) return;
+        if ((p.name||"").toLowerCase().includes(ql) || (p.desc||"").toLowerCase().includes(ql)) {
+          results.push({ ...p, _c: cat });
+        }
+      });
+    });
+    return results.slice(0, 6);
+  }, [q, places]);
+
   const trending = useMemo(() => {
     let a = [];
     Object.entries(places).forEach(([c, items]) => items.filter(i => i.trending).forEach(i => a.push({ ...i, _c: c })));
@@ -371,6 +387,11 @@ export default function App() {
     @keyframes badgeIn{from{opacity:0;transform:scale(.8) translateY(8px)}to{opacity:1;transform:none}}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     svg{shape-rendering:geometricPrecision}
+    @media(max-width:480px){
+      .hero-logo{width:72px!important;height:72px!important}
+      .profile-pic{width:68px!important;height:68px!important}
+      .login-logo{width:160px!important;height:160px!important}
+    }
     ::-webkit-scrollbar{width:5px;height:5px}
     ::-webkit-scrollbar-thumb{background:#C4D5E8;border-radius:10px}
     ::-webkit-scrollbar-track{background:transparent}
@@ -389,7 +410,7 @@ export default function App() {
         {regStep === 0 ? (
           <>
             <div style={{ textAlign:"center",marginBottom:40 }}>
-              <img src="/logo.png" alt="AfulaGo" style={{ width:280,height:280,objectFit:"contain",marginBottom:8,filter:"drop-shadow(0 4px 24px rgba(0,0,0,.25))",animation:"float 3s ease-in-out infinite",maskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)" }}/>
+              <img src="/logo.png" alt="AfulaGo" className="login-logo" style={{ width:280,height:280,objectFit:"contain",marginBottom:8,filter:"drop-shadow(0 4px 24px rgba(0,0,0,.25))",animation:"float 3s ease-in-out infinite",maskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)",WebkitMaskImage:"radial-gradient(ellipse 80% 80% at 50% 50%, black 50%, transparent 100%)" }}/>
               <p style={{ color:"rgba(255,255,255,.75)",fontSize:16,margin:"0 0 10px" }}>גלו את עפולה</p>
               {regForm.name && (
                 <p style={{ color:"#fff",fontSize:20,fontWeight:700,margin:0,animation:"fadeUp .3s ease both",textShadow:"0 1px 8px rgba(0,0,0,.15)" }}>
@@ -496,7 +517,7 @@ export default function App() {
       )}
 
       {/* ── Hero ── */}
-      <div style={{ position:"relative",overflow:"hidden",minHeight:460 }}>
+      <div style={{ position:"relative",overflow:"hidden",minHeight:320 }}>
         <img src={cd.photo} alt="" onError={e=>{e.target.style.display="none"}} style={{ position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",transform:"scale(1.04)" }}/>
         <div style={{ position:"absolute",inset:0,background:"linear-gradient(160deg, rgba(26,106,31,.95) 0%, rgba(29,106,191,.88) 60%, rgba(20,80,160,.95) 100%)" }}/>
         <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 30% 0%, rgba(245,162,0,.15) 0%, transparent 60%)" }}/>
@@ -506,7 +527,7 @@ export default function App() {
         <div style={{ position:"absolute",top:0,left:0,right:0,zIndex:10,display:"flex",alignItems:"flex-start",justifyContent:"space-between",padding:"16px 24px",pointerEvents:"none" }}>
           {/* Left: Logo + Settings & Favorites below */}
           <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:10,pointerEvents:"auto" }}>
-            <img src="/logo.png" alt="AfulaGo" style={{ width:130,height:130,objectFit:"cover",borderRadius:"50%",border:"3px solid rgba(255,255,255,.7)",boxShadow:"0 4px 20px rgba(0,0,0,.3)",flexShrink:0 }}/>
+            <img src="/logo.png" alt="AfulaGo" className="hero-logo" style={{ width:130,height:130,objectFit:"cover",borderRadius:"50%",border:"3px solid rgba(255,255,255,.7)",boxShadow:"0 4px 20px rgba(0,0,0,.3)",flexShrink:0 }}/>
             <div style={{ display:"flex",alignItems:"center",gap:8 }}>
               <div style={{ position:"relative" }}>
                 <button onClick={()=>setSettingsOpen(o=>!o)} style={{ background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:"50%",width:42,height:42,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",backdropFilter:"blur(10px)",transition:"all .2s" }}
@@ -546,7 +567,7 @@ export default function App() {
           <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:10,pointerEvents:"auto" }}>
             <input ref={profileInputRef} type="file" accept="image/*" style={{ display:"none" }}
               onChange={e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=ev=>setProfileImg(ev.target.result);r.readAsDataURL(f);}}}/>
-            <div onClick={()=>profileInputRef.current.click()} style={{ position:"relative",width:110,height:110,borderRadius:"50%",border:"3px solid rgba(255,255,255,.8)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(0,0,0,.25)",transition:"transform .2s",flexShrink:0 }}
+            <div onClick={()=>profileInputRef.current.click()} className="profile-pic" style={{ position:"relative",width:110,height:110,borderRadius:"50%",border:"3px solid rgba(255,255,255,.8)",overflow:"hidden",background:"rgba(255,255,255,.2)",backdropFilter:"blur(10px)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 20px rgba(0,0,0,.25)",transition:"transform .2s",flexShrink:0 }}
               onMouseEnter={e=>e.currentTarget.style.transform="scale(1.07)"}
               onMouseLeave={e=>e.currentTarget.style.transform=""}>
               {profileImg ? <img src={profileImg} alt="פרופיל" style={{ width:"100%",height:"100%",objectFit:"cover" }}/> : <User size={44} color="#fff"/>}
@@ -581,8 +602,30 @@ export default function App() {
 
             {/* Search bar */}
             <div style={{ maxWidth:520,margin:"0 auto 24px",position:"relative" }}>
-              <Search size={18} color="#94A3B8" style={{ position:"absolute",top:"50%",right:18,transform:"translateY(-50%)",pointerEvents:"none" }}/>
-              <input value={q} onChange={e=>setQ(e.target.value)} placeholder="חיפוש מקומות, מסעדות, אטרקציות..." style={{ width:"100%",padding:"16px 52px 16px 20px",borderRadius:16,border:"none",fontSize:15,fontFamily:"'Rubik'",background:"rgba(255,255,255,.95)",backdropFilter:"blur(12px)",outline:"none",boxShadow:"0 8px 32px rgba(0,0,0,.18)",boxSizing:"border-box",color:"#0F172A" }}/>
+              <Search size={18} color="#94A3B8" style={{ position:"absolute",top:18,right:18,pointerEvents:"none",zIndex:1 }}/>
+              <input
+                value={q}
+                onChange={e=>{ setQ(e.target.value); setShowSug(true); }}
+                onFocus={()=>setShowSug(true)}
+                onBlur={()=>setTimeout(()=>setShowSug(false),150)}
+                placeholder="חיפוש מקומות, מסעדות, אטרקציות..."
+                style={{ width:"100%",padding:"16px 52px 16px 20px",borderRadius:showSug&&suggestions.length?`16px 16px 0 0`:16,border:"none",fontSize:15,fontFamily:"'Rubik'",background:"rgba(255,255,255,.95)",backdropFilter:"blur(12px)",outline:"none",boxShadow:"0 8px 32px rgba(0,0,0,.18)",boxSizing:"border-box",color:"#0F172A" }}/>
+              {showSug && suggestions.length > 0 && (
+                <div style={{ position:"absolute",top:"100%",left:0,right:0,background:"#fff",borderRadius:"0 0 16px 16px",boxShadow:"0 12px 32px rgba(0,0,0,.15)",overflow:"hidden",zIndex:100 }}>
+                  {suggestions.map((p,i)=>(
+                    <div key={i} onMouseDown={()=>{ setQ(p.name); setShowSug(false); }}
+                      style={{ display:"flex",alignItems:"center",gap:12,padding:"11px 18px",cursor:"pointer",borderTop:"1px solid #F1F5F9",transition:"background .15s" }}
+                      onMouseEnter={e=>e.currentTarget.style.background="#F8FAFC"}
+                      onMouseLeave={e=>e.currentTarget.style.background="#fff"}>
+                      <span style={{ fontSize:22,lineHeight:1,flexShrink:0 }}>{p.icon}</span>
+                      <div style={{ textAlign:"right",overflow:"hidden" }}>
+                        <div style={{ fontSize:14,fontWeight:700,color:"#0F172A",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{p.name}</div>
+                        <div style={{ fontSize:12,color:"#64748B",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis" }}>{CATS[p._c]?.label}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
@@ -592,7 +635,6 @@ export default function App() {
       {/* ── Category nav ── */}
       <div style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
-          <img src="/logo.png" alt="AfulaGo" style={{ width:40,height:40,objectFit:"contain",flexShrink:0,borderRadius:10 }}/>
           <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1 }}>
             {[{k:"all",label:"הכל",Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
@@ -678,7 +720,14 @@ export default function App() {
                               <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                                 onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
                                 <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
-                                  {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>}
+                                  {hasImg ? (
+                                    <>
+                                      <img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none";e.target.nextElementSibling.style.display="block";}}/>
+                                      <span style={{ fontSize:48,lineHeight:1,display:"none",position:"absolute" }}>{p.icon}</span>
+                                    </>
+                                  ) : (
+                                    <span style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>
+                                  )}
                                   {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                                   {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
                                   <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
@@ -705,7 +754,14 @@ export default function App() {
                         <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                           onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
                           <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
-                            {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>}
+                            {hasImg ? (
+                              <>
+                                <img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none";e.target.nextElementSibling.style.display="block";}}/>
+                                <span style={{ fontSize:48,lineHeight:1,display:"none",position:"absolute" }}>{p.icon}</span>
+                              </>
+                            ) : (
+                              <span style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>
+                            )}
                             {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                             {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
                             <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
