@@ -173,15 +173,15 @@ function Card({ p, cat, favs, toggle, click, T }) {
             onMouseEnter={e=>e.target.style.transform="scale(1.04)"}
             onMouseLeave={e=>e.target.style.transform="scale(1)"}/>
         ) : (
-          <span style={{ fontSize: 44 }}>{p.icon}</span>
+          <span style={{ fontSize: 44, lineHeight: 1, display: "block" }}>{p.icon}</span>
         )}
         {hasImg && <div style={{ position:"absolute", inset:0, background:"linear-gradient(transparent 50%, rgba(0,0,0,0.35))" }}/>}
         <button onClick={e=>{e.stopPropagation();toggle(p.name)}} style={{ position: "absolute", top: 10, left: 10, background: "rgba(255,255,255,.92)", border: "none", borderRadius: "50%", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 1px 6px rgba(0,0,0,.08)", transition: "transform .2s" }}
           onMouseEnter={e=>e.currentTarget.style.transform="scale(1.12)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
           <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"}/>
         </button>
-        {p.trending&&<div style={{ position:"absolute",top:10,right:10,background:"linear-gradient(135deg,#F59E0B,#EF4444)",color:"#fff",fontSize:9.5,fontWeight:800,padding:"3px 8px",borderRadius:12,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={9}/>טרנדי</div>}
-        {p.date&&<div style={{ position:"absolute",bottom:8,right:10,background:"rgba(0,0,0,.5)",color:"#fff",fontSize:9.5,fontWeight:600,padding:"3px 8px",borderRadius:8,display:"flex",alignItems:"center",gap:3,backdropFilter:"blur(4px)" }}><Clock size={9}/>{p.date}</div>}
+        {p.trending&&<div style={{ position:"absolute",top:10,right:10,background:"linear-gradient(135deg,#F59E0B,#EF4444)",color:"#fff",fontSize:9.5,fontWeight:800,padding:"3px 8px",borderRadius:12,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={12}/>טרנדי</div>}
+        {p.date&&<div style={{ position:"absolute",bottom:8,right:10,background:"rgba(0,0,0,.5)",color:"#fff",fontSize:9.5,fontWeight:600,padding:"3px 8px",borderRadius:8,display:"flex",alignItems:"center",gap:3,backdropFilter:"blur(4px)" }}><Clock size={12}/>{p.date}</div>}
       </div>
       <div style={{ padding: "12px 14px 14px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
@@ -190,8 +190,8 @@ function Card({ p, cat, favs, toggle, click, T }) {
         </div>
         <p style={{ margin: "0 0 7px", fontSize: 12, color: T.textSoft, lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.desc}</p>
         <Strs r={p.rating} T={T}/>
-        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 7, color: T.textMuted, fontSize: 11 }}><MapPin size={10}/><span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.address}</span></div>
-        {p.phone&&<div style={{ display:"flex",alignItems:"center",gap:4,marginTop:2,color:T.textMuted,fontSize:11 }}><Phone size={10}/><span dir="ltr">{p.phone}</span></div>}
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 7, color: T.textMuted, fontSize: 11 }}><MapPin size={12}/><span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.address}</span></div>
+        {p.phone&&<div style={{ display:"flex",alignItems:"center",gap:4,marginTop:2,color:T.textMuted,fontSize:11 }}><Phone size={12}/><span dir="ltr">{p.phone}</span></div>}
       </div>
     </div>
   );
@@ -209,7 +209,7 @@ function Modal({ p, cat, close, favs, toggle, T }) {
           {hasImg ? (
             <img src={p.img} alt={p.name} onError={()=>setImgErr(true)} style={{ width:"100%",height:"100%",objectFit:"cover" }}/>
           ) : (
-            <span style={{ fontSize:64 }}>{p.icon}</span>
+            <span style={{ fontSize:64, lineHeight: 1, display: "block" }}>{p.icon}</span>
           )}
           {hasImg && <div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 40%, rgba(0,0,0,0.45))" }}/>}
           <button onClick={close} style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)" }}><X size={16} strokeWidth={2.5}/></button>
@@ -220,7 +220,7 @@ function Modal({ p, cat, close, favs, toggle, T }) {
           <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14,flexWrap:"wrap" }}>
             <Strs r={p.rating} T={T}/>
             {p.price&&<span style={{ fontSize:12,fontWeight:700,color:"#059669",background:"#ECFDF5",padding:"2px 8px",borderRadius:8 }}>{p.price}</span>}
-            {p.trending&&<span style={{ background:"#E0F2FE",color:"#0369A1",fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={10}/>טרנדי</span>}
+            {p.trending&&<span style={{ background:"#E0F2FE",color:"#0369A1",fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={12}/>טרנדי</span>}
           </div>
           <p style={{ margin:"0 0 16px",fontSize:14,color:T.textSoft,lineHeight:1.7 }}>{p.desc}</p>
           <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
@@ -370,6 +370,7 @@ export default function App() {
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
     @keyframes badgeIn{from{opacity:0;transform:scale(.8) translateY(8px)}to{opacity:1;transform:none}}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    svg{shape-rendering:geometricPrecision}
     ::-webkit-scrollbar{width:5px;height:5px}
     ::-webkit-scrollbar-thumb{background:#C4D5E8;border-radius:10px}
     ::-webkit-scrollbar-track{background:transparent}
@@ -623,7 +624,7 @@ export default function App() {
                   onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.boxShadow=`0 12px 32px ${cc}40`}}
                   onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.12:.06})`}}>
                   <div style={{ height:90,display:"flex",alignItems:"center",justifyContent:"center",background:`linear-gradient(135deg,${cc}22,${cc}0a)`,position:"relative" }}>
-                    <span style={{ fontSize:42 }}>{p.icon}</span>
+                    <span style={{ fontSize:42, lineHeight: 1, display: "block" }}>{p.icon}</span>
                     <div style={{ position:"absolute",top:8,right:8,background:cc,color:"#fff",fontSize:9,fontWeight:800,padding:"2px 8px",borderRadius:10 }}>{CATS[p._c]?.label}</div>
                   </div>
                   <div style={{ padding:"12px 14px 14px" }}>
@@ -677,7 +678,7 @@ export default function App() {
                               <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                                 onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
                                 <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
-                                  {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48 }}>{p.icon}</span>}
+                                  {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>}
                                   {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                                   {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
                                   <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
@@ -704,7 +705,7 @@ export default function App() {
                         <div key={i} onClick={()=>{setModal(p);setMCat(cat)}} style={{ width:280,minWidth:280,background:T.card,borderRadius:20,overflow:"hidden",cursor:"pointer",border:`1px solid ${T.cardBorder}`,boxShadow:`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`,transition:"all .3s cubic-bezier(.25,.8,.25,1)",flexShrink:0,animation:`fadeUp .4s ease ${i*.05}s both` }}
                           onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${cc}30`}} onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,${darkMode?.1:.05})`}}>
                           <div style={{ height:170,display:"flex",alignItems:"center",justifyContent:"center",background:hasImg?"#F3EDE8":`linear-gradient(135deg, ${cc}20, ${cc}08)`,position:"relative",overflow:"hidden" }}>
-                            {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48 }}>{p.icon}</span>}
+                            {hasImg?<img src={p.img} alt={p.name} style={{ width:"100%",height:"100%",objectFit:"cover" }} onError={e=>{e.target.style.display="none"}}/>:<span style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>}
                             {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
                             {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
                             <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
