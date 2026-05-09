@@ -849,7 +849,7 @@ export default function App() {
       {/* ── Category nav ── */}
       <nav aria-label="קטגוריות" style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
-          <div style={{ position:"relative",flex:1,overflow:"hidden" }}>
+          <div style={{ position:"relative",flex:1,overflow:"hidden",maskImage:"linear-gradient(to right, transparent 0px, black 56px, black calc(100% - 12px), transparent 100%)",WebkitMaskImage:"linear-gradient(to right, transparent 0px, black 56px, black calc(100% - 12px), transparent 100%)" }}>
           <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0" }}>
 
             {[{k:"all",label:t.catAll,Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v,label:t[CAT_KEYS[k]]||v.label}))].map(({k,label,Icon,color})=>{
@@ -861,7 +861,6 @@ export default function App() {
               );
             })}
           </div>
-          <div style={{ position:"absolute",top:0,left:0,bottom:0,width:56,background:`linear-gradient(to right, ${T.surface} 30%, transparent)`,pointerEvents:"none" }}/>
           </div>
         </div>
       </nav>
