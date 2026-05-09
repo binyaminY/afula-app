@@ -412,6 +412,18 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [profileImg, setProfileImg] = useState(null);
   const profileInputRef = useRef(null);
+  const catScrollRef = useRef(null);
+
+  useEffect(()=>{
+    const el = catScrollRef.current;
+    if (!el) return;
+    const overflow = el.scrollWidth - el.clientWidth;
+    if (overflow > 0) {
+      const btns = el.querySelectorAll('button');
+      const last = btns[btns.length - 1];
+      if (last) el.scrollLeft = -(last.offsetWidth * 0.55);
+    }
+  }, []);
   const T = darkMode ? DARK : LIGHT;
   const [regForm, setRegForm] = useState({ name:"", email:"", phone:"", password:"", city:"עפולה" });
   const [regStep, setRegStep] = useState(0); // 0=form, 1=success
@@ -846,7 +858,7 @@ export default function App() {
       {/* ── Category nav ── */}
       <nav aria-label="קטגוריות" style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
-          <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1,maskImage:"linear-gradient(to right, transparent 0px, black 60px)",WebkitMaskImage:"linear-gradient(to right, transparent 0px, black 60px)" }}>
+          <div ref={catScrollRef} className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1,maskImage:"linear-gradient(to right, transparent 0px, black 60px)",WebkitMaskImage:"linear-gradient(to right, transparent 0px, black 60px)" }}>
             {[{k:"all",label:t.catAll,Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v,label:t[CAT_KEYS[k]]||v.label}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
