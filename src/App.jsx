@@ -546,8 +546,8 @@ export default function App() {
     .skip-link:focus{top:0}
     .a11y-fab{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);transition:background .2s}
     .a11y-fab:hover{background:rgba(255,255,255,.35)}
-    @keyframes a11yIn{from{opacity:0;transform:translate(-50%,-50%) scale(.95)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-    .a11y-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9200;background:#fff;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.25);padding:20px 18px 14px;width:280px;animation:a11yIn .2s ease;font-family:'Rubik',sans-serif}
+    @keyframes a11yIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+    .a11y-panel{position:absolute;top:calc(100% + 8px);right:0;z-index:9200;background:#fff;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.25);padding:20px 18px 14px;width:280px;animation:a11yIn .2s ease;font-family:'Rubik',sans-serif}
     .a11y-panel-title{font-size:14px;font-weight:800;color:#1A1A1A;margin:0 0 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #F0F0F0;padding-bottom:10px}
     .a11y-option{display:flex;align-items:center;justify-content:space-between;padding:9px 4px;border-bottom:1px solid #F7F7F7;cursor:pointer;border-radius:8px;transition:background .12s}
     .a11y-option:last-child{border-bottom:none}
@@ -731,7 +731,7 @@ export default function App() {
                   <Settings size={18} color="#fff" aria-hidden="true"/>
                 </button>
                 {settingsOpen && (
-                  <div onClick={e=>e.stopPropagation()} style={{ position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.2)",minWidth:220,overflow:"hidden",animation:"a11yIn .2s ease",whiteSpace:"nowrap",zIndex:9200 }}>
+                  <div onClick={e=>e.stopPropagation()} style={{ position:"absolute",top:"calc(100% + 8px)",right:0,background:T.surface,borderRadius:14,boxShadow:"0 8px 32px rgba(0,0,0,.2)",minWidth:220,overflow:"hidden",animation:"a11yIn .2s ease",whiteSpace:"nowrap",zIndex:9200 }}>
                     <div style={{ padding:"12px 16px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:10 }}>
                       <User size={15} color="#2d7720"/>
                       <span style={{ fontSize:13,fontWeight:700,color:T.text }}>{regForm.name || user?.user_metadata?.name || t.guest}</span>
