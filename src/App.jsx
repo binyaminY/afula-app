@@ -426,7 +426,6 @@ export default function App() {
   const [lang, setLang] = useState("he");
   const t = TRANSLATIONS[lang];
 
-  useEffect(() => { document.body.classList.toggle("high-contrast", a11yHighContrast); }, [a11yHighContrast]);
   useEffect(() => { document.body.classList.toggle("large-text", a11yLargeText); }, [a11yLargeText]);
   useEffect(() => { document.body.classList.toggle("underline-links", a11yUnderlineLinks); }, [a11yUnderlineLinks]);
 
@@ -559,7 +558,6 @@ export default function App() {
     .a11y-toggle[aria-checked="false"]{background:#D1D5DB}
     .a11y-reset{width:100%;margin-top:12px;padding:9px;background:#F3F8FF;border:1.5px solid #BFDBFE;border-radius:10px;color:#1a6abf;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Rubik',sans-serif}
     .a11y-reset:hover{background:#DBEAFE}
-    body.high-contrast{filter:contrast(1.5) saturate(0.7)}
     body.large-text{font-size:110%!important}
     body.grayscale-mode{filter:grayscale(1)}
     body.underline-links a,body.underline-links [role="link"],body.underline-links [role="button"]{text-decoration:underline!important;text-underline-offset:3px}
@@ -657,7 +655,7 @@ export default function App() {
   // ─── MAIN PAGE ───
   return (
     <>
-    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s",filter:a11yGrayscale?"grayscale(1)":undefined }}>
+    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s",filter:[a11yGrayscale&&"grayscale(1)",a11yHighContrast&&"contrast(1.5) saturate(0.7)"].filter(Boolean).join(" ")||undefined }}>
       <style>{css}</style>
 
       {/* ── Skip link ── */}
@@ -849,9 +847,8 @@ export default function App() {
       {/* ── Category nav ── */}
       <nav aria-label="קטגוריות" style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
-          <div style={{ position:"relative",flex:1,overflow:"hidden",maskImage:"linear-gradient(to right, transparent 0px, black 56px, black calc(100% - 12px), transparent 100%)",WebkitMaskImage:"linear-gradient(to right, transparent 0px, black 56px, black calc(100% - 12px), transparent 100%)" }}>
+          <div style={{ flex:1,overflow:"hidden",maskImage:"linear-gradient(to right, transparent, black 60px)",WebkitMaskImage:"linear-gradient(to right, transparent, black 60px)" }}>
           <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0" }}>
-
             {[{k:"all",label:t.catAll,Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v,label:t[CAT_KEYS[k]]||v.label}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
@@ -860,6 +857,7 @@ export default function App() {
                 </button>
               );
             })}
+            <div style={{flexShrink:0,width:40}}/>
           </div>
           </div>
         </div>
