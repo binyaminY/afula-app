@@ -846,7 +846,7 @@ export default function App() {
       {/* ── Category nav ── */}
       <nav aria-label="קטגוריות" style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
-          <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1,maskImage:"linear-gradient(to right, transparent, black 50px, black calc(100% - 20px), transparent)",WebkitMaskImage:"linear-gradient(to right, transparent, black 50px, black calc(100% - 20px), transparent)" }}>
+          <div className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",flex:1,maskImage:"linear-gradient(to right, transparent 0px, black 60px)",WebkitMaskImage:"linear-gradient(to right, transparent 0px, black 60px)" }}>
             {[{k:"all",label:t.catAll,Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v,label:t[CAT_KEYS[k]]||v.label}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
