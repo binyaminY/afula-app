@@ -428,7 +428,6 @@ export default function App() {
 
   useEffect(() => { document.body.classList.toggle("high-contrast", a11yHighContrast); }, [a11yHighContrast]);
   useEffect(() => { document.body.classList.toggle("large-text", a11yLargeText); }, [a11yLargeText]);
-  useEffect(() => { document.body.classList.toggle("grayscale-mode", a11yGrayscale); }, [a11yGrayscale]);
   useEffect(() => { document.body.classList.toggle("underline-links", a11yUnderlineLinks); }, [a11yUnderlineLinks]);
 
   useEffect(() => {
@@ -657,37 +656,14 @@ export default function App() {
 
   // ─── MAIN PAGE ───
   return (
-    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s" }}>
+    <>
+    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s",filter:a11yGrayscale?"grayscale(1)":undefined }}>
       <style>{css}</style>
 
       {/* ── Skip link ── */}
       <a href="#main-content" className="skip-link">{t.skipToContent}</a>
 
-
       {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog} T={T} t={t}/>}
-
-      {/* ── A11y modal (rendered at root level to escape overflow:hidden) ── */}
-      {a11yOpen && (
-        <div onClick={()=>setA11yOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:9199,display:"flex",alignItems:"center",justifyContent:"center"}}>
-          <div className="a11y-panel" role="dialog" aria-label={t.accessibility} aria-modal="true" onClick={e=>e.stopPropagation()}>
-            <p className="a11y-panel-title"><span aria-hidden="true">♿</span> {t.accessibility}</p>
-            {[
-              { label:t.highContrast, icon:"🔆", val:a11yHighContrast, set:setA11yHighContrast },
-              { label:t.largeText,    icon:"🔠", val:a11yLargeText,    set:setA11yLargeText },
-              { label:t.grayscale,    icon:"🎨", val:a11yGrayscale,    set:setA11yGrayscale },
-              { label:t.underlineLinks,icon:"🔗",val:a11yUnderlineLinks,set:setA11yUnderlineLinks },
-            ].map(({label,icon,val,set})=>(
-              <div key={label} className="a11y-option" onClick={()=>set(v=>!v)}>
-                <span className="a11y-option-label"><span aria-hidden="true">{icon}</span>{label}</span>
-                <button className="a11y-toggle" role="switch" aria-checked={val} aria-label={label} onClick={e=>{e.stopPropagation();set(v=>!v)}}/>
-              </div>
-            ))}
-            <button className="a11y-reset" onClick={()=>{setA11yHighContrast(false);setA11yLargeText(false);setA11yGrayscale(false);setA11yUnderlineLinks(false);}}>
-              {t.resetSettings}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* ── Add Place Modal ── */}
       {addPlaceOpen&&(
@@ -1056,5 +1032,29 @@ export default function App() {
         <p style={{ color:"rgba(255,255,255,.65)",fontSize:15,margin:"8px 0 0" }}>{t.createdBy}</p>
       </div>
     </div>
+
+    {/* ── A11y modal — outside filtered div so grayscale doesn't break fixed positioning ── */}
+    {a11yOpen && (
+      <div onClick={()=>setA11yOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:9199,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <div className="a11y-panel" role="dialog" aria-label={t.accessibility} aria-modal="true" onClick={e=>e.stopPropagation()}>
+          <p className="a11y-panel-title"><span aria-hidden="true">♿</span> {t.accessibility}</p>
+          {[
+            { label:t.highContrast, icon:"🔆", val:a11yHighContrast, set:setA11yHighContrast },
+            { label:t.largeText,    icon:"🔠", val:a11yLargeText,    set:setA11yLargeText },
+            { label:t.grayscale,    icon:"🎨", val:a11yGrayscale,    set:setA11yGrayscale },
+            { label:t.underlineLinks,icon:"🔗",val:a11yUnderlineLinks,set:setA11yUnderlineLinks },
+          ].map(({label,icon,val,set})=>(
+            <div key={label} className="a11y-option" onClick={()=>set(v=>!v)}>
+              <span className="a11y-option-label"><span aria-hidden="true">{icon}</span>{label}</span>
+              <button className="a11y-toggle" role="switch" aria-checked={val} aria-label={label} onClick={e=>{e.stopPropagation();set(v=>!v)}}/>
+            </div>
+          ))}
+          <button className="a11y-reset" onClick={()=>{setA11yHighContrast(false);setA11yLargeText(false);setA11yGrayscale(false);setA11yUnderlineLinks(false);}}>
+            {t.resetSettings}
+          </button>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
