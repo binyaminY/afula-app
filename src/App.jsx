@@ -413,17 +413,12 @@ export default function App() {
   const [profileImg, setProfileImg] = useState(null);
   const profileInputRef = useRef(null);
   const catScrollRef = useRef(null);
-
   useEffect(()=>{
     const el = catScrollRef.current;
     if (!el) return;
-    const overflow = el.scrollWidth - el.clientWidth;
-    if (overflow > 0) {
-      const btns = el.querySelectorAll('button');
-      const last = btns[btns.length - 1];
-      if (last) el.scrollLeft = -(last.offsetWidth * 0.55);
-    }
+    requestAnimationFrame(()=>{ el.scrollBy({ left: -50 }); });
   }, []);
+
   const T = darkMode ? DARK : LIGHT;
   const [regForm, setRegForm] = useState({ name:"", email:"", phone:"", password:"", city:"עפולה" });
   const [regStep, setRegStep] = useState(0); // 0=form, 1=success
