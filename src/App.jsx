@@ -547,7 +547,7 @@ export default function App() {
     .a11y-fab{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);transition:background .2s}
     .a11y-fab:hover{background:rgba(255,255,255,.35)}
     @keyframes a11yIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-    .a11y-panel{position:relative;z-index:9200;background:#fff;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.25);padding:20px 18px 14px;width:280px;animation:a11yIn .2s ease;font-family:'Rubik',sans-serif}
+    .a11y-panel{position:relative;z-index:9200;background:#fff;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.25);padding:20px 18px 14px;width:300px;animation:a11yIn .2s ease;font-family:'Rubik',sans-serif;filter:none!important}
     .a11y-panel-title{font-size:14px;font-weight:800;color:#1A1A1A;margin:0 0 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #F0F0F0;padding-bottom:10px}
     .a11y-option{display:flex;align-items:center;justify-content:space-between;padding:9px 4px;border-bottom:1px solid #F7F7F7;cursor:pointer;border-radius:8px;transition:background .12s}
     .a11y-option:last-child{border-bottom:none}
