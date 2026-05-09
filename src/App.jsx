@@ -413,11 +413,6 @@ export default function App() {
   const [profileImg, setProfileImg] = useState(null);
   const profileInputRef = useRef(null);
   const catScrollRef = useRef(null);
-  useEffect(()=>{
-    const el = catScrollRef.current;
-    if (!el) return;
-    requestAnimationFrame(()=>{ el.scrollBy({ left: -50 }); });
-  }, []);
 
   const T = darkMode ? DARK : LIGHT;
   const [regForm, setRegForm] = useState({ name:"", email:"", phone:"", password:"", city:"עפולה" });
@@ -854,7 +849,7 @@ export default function App() {
       <nav aria-label="קטגוריות" style={{ position:"sticky",top:0,zIndex:50,background:T.surface,borderBottom:`1px solid ${T.border}`,boxShadow:`0 2px 16px rgba(0,0,0,${darkMode?.08:.04})` }}>
         <div className="cat-nav-inner" style={{ maxWidth:1400,margin:"0 auto",padding:"0 48px",display:"flex",alignItems:"center",gap:12 }}>
           <div style={{ flex:1, overflow:"hidden" }}>
-          <div ref={catScrollRef} className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0" }}>
+          <div ref={catScrollRef} className="cat-scroll" style={{ display:"flex",gap:4,overflowX:"auto",padding:"10px 0",paddingRight:"80px" }}>
             {[{k:"all",label:t.catAll,Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v,label:t[CAT_KEYS[k]]||v.label}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
