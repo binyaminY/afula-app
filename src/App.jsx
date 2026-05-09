@@ -426,7 +426,6 @@ export default function App() {
   const [lang, setLang] = useState("he");
   const t = TRANSLATIONS[lang];
 
-  useEffect(() => { document.body.classList.toggle("large-text", a11yLargeText); }, [a11yLargeText]);
   useEffect(() => { document.body.classList.toggle("underline-links", a11yUnderlineLinks); }, [a11yUnderlineLinks]);
 
   useEffect(() => {
@@ -655,7 +654,7 @@ export default function App() {
   // ─── MAIN PAGE ───
   return (
     <>
-    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s",filter:[a11yGrayscale&&"grayscale(1)",a11yHighContrast&&"contrast(1.5) saturate(0.7)"].filter(Boolean).join(" ")||undefined }}>
+    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:T.bg,transition:"background .3s",filter:[a11yGrayscale&&"grayscale(1)",a11yHighContrast&&"contrast(1.5) saturate(0.7)"].filter(Boolean).join(" ")||undefined,zoom:a11yLargeText?1.25:undefined }}>
       <style>{css}</style>
 
       {/* ── Skip link ── */}
