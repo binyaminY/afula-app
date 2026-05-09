@@ -328,7 +328,7 @@ function Modal({ p, cat, close, favs, toggle, T, t }) {
           {hasImg && <div style={{ position:"absolute",bottom:10,left:"50%",transform:"translateX(-50%)",background:"rgba(0,0,0,.45)",color:"#fff",fontSize:11,fontWeight:600,padding:"4px 12px",borderRadius:20,backdropFilter:"blur(6px)",pointerEvents:"none" }}>לחץ להגדלה</div>}
           <button onClick={e=>{e.stopPropagation();toggle(p.name)}} aria-label={f?(t?.removeFav||"הסר ממועדפים"):(t?.addFav||"הוסף למועדפים")} aria-pressed={f} style={{ position:"absolute",top:14,right:14,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.08)",zIndex:2 }}><Heart size={16} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"} aria-hidden="true"/></button>
         </div>
-        <button onClick={close} aria-label={t?.close||"סגור"} style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.95)",border:"none",borderRadius:"50%",width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 10px rgba(0,0,0,.15)",zIndex:10 }}><X size={17} strokeWidth={2.5} aria-hidden="true"/></button>
+        <button onClick={close} aria-label={t?.close||"סגור"} style={{ position:"absolute",top:14,left:14,background:"rgba(255,255,255,.95)",border:"none",borderRadius:"50%",width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 10px rgba(0,0,0,.15)",zIndex:10 }}><X size={17} strokeWidth={2.5} color="#333" aria-hidden="true"/></button>
         <div style={{ padding:"20px 22px 24px" }}>
           <h2 style={{ margin:"0 0 8px",fontSize:20,fontWeight:800,color:T.text }}>{p.name}</h2>
           <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14,flexWrap:"wrap" }}>
@@ -666,6 +666,29 @@ export default function App() {
 
       {modal&&<Modal p={modal} cat={mCat} close={()=>setModal(null)} favs={favs} toggle={tog} T={T} t={t}/>}
 
+      {/* ── A11y modal (rendered at root level to escape overflow:hidden) ── */}
+      {a11yOpen && (
+        <div onClick={()=>setA11yOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:9199,display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div className="a11y-panel" role="dialog" aria-label={t.accessibility} aria-modal="true" onClick={e=>e.stopPropagation()}>
+            <p className="a11y-panel-title"><span aria-hidden="true">♿</span> {t.accessibility}</p>
+            {[
+              { label:t.highContrast, icon:"🔆", val:a11yHighContrast, set:setA11yHighContrast },
+              { label:t.largeText,    icon:"🔠", val:a11yLargeText,    set:setA11yLargeText },
+              { label:t.grayscale,    icon:"🎨", val:a11yGrayscale,    set:setA11yGrayscale },
+              { label:t.underlineLinks,icon:"🔗",val:a11yUnderlineLinks,set:setA11yUnderlineLinks },
+            ].map(({label,icon,val,set})=>(
+              <div key={label} className="a11y-option" onClick={()=>set(v=>!v)}>
+                <span className="a11y-option-label"><span aria-hidden="true">{icon}</span>{label}</span>
+                <button className="a11y-toggle" role="switch" aria-checked={val} aria-label={label} onClick={e=>{e.stopPropagation();set(v=>!v)}}/>
+              </div>
+            ))}
+            <button className="a11y-reset" onClick={()=>{setA11yHighContrast(false);setA11yLargeText(false);setA11yGrayscale(false);setA11yUnderlineLinks(false);}}>
+              {t.resetSettings}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Add Place Modal ── */}
       {addPlaceOpen&&(
         <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(8px)" }} onClick={()=>setAddPlaceOpen(false)}>
@@ -770,27 +793,6 @@ export default function App() {
                     <path d="M12 6v6l-3 5M12 12l3 5M7 9h10"/>
                   </svg>
                 </button>
-                {a11yOpen && (
-                  <div onClick={()=>setA11yOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:9199,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <div className="a11y-panel" role="dialog" aria-label={t.accessibility} aria-modal="true" onClick={e=>e.stopPropagation()}>
-                    <p className="a11y-panel-title"><span aria-hidden="true">♿</span> {t.accessibility}</p>
-                    {[
-                      { label:t.highContrast, icon:"🔆", val:a11yHighContrast, set:setA11yHighContrast },
-                      { label:t.largeText,    icon:"🔠", val:a11yLargeText,    set:setA11yLargeText },
-                      { label:t.grayscale,    icon:"🎨", val:a11yGrayscale,    set:setA11yGrayscale },
-                      { label:t.underlineLinks,icon:"🔗",val:a11yUnderlineLinks,set:setA11yUnderlineLinks },
-                    ].map(({label,icon,val,set})=>(
-                      <div key={label} className="a11y-option" onClick={()=>set(v=>!v)}>
-                        <span className="a11y-option-label"><span aria-hidden="true">{icon}</span>{label}</span>
-                        <button className="a11y-toggle" role="switch" aria-checked={val} aria-label={label} onClick={e=>{e.stopPropagation();set(v=>!v)}}/>
-                      </div>
-                    ))}
-                    <button className="a11y-reset" onClick={()=>{setA11yHighContrast(false);setA11yLargeText(false);setA11yGrayscale(false);setA11yUnderlineLinks(false);}}>
-                      {t.resetSettings}
-                    </button>
-                  </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
