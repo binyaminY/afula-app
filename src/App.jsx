@@ -852,7 +852,7 @@ export default function App() {
             {[{k:"all",label:t.catAll,Icon:null},...Object.entries(CATS).map(([k,v])=>({k,...v,label:t[CAT_KEYS[k]]||v.label}))].map(({k,label,Icon,color})=>{
               const active=activeCat===k;
               return(
-                <button key={k} onClick={()=>setAC(k)} aria-pressed={active} aria-label={`קטגוריה: ${label}`} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:30,border:"none",background:active?(color||T.accent):"transparent",color:active?"#fff":(color||T.textSoft),fontWeight:active?700:500,fontSize:13,cursor:"pointer",whiteSpace:"nowrap",transition:"all .2s",flexShrink:0,boxShadow:active?`0 4px 14px ${(color||T.accent)}40`:"none" }}>
+                <button key={k} onClick={()=>setAC(k)} aria-pressed={active} aria-label={`קטגוריה: ${label}`} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:30,border:`1.5px solid ${active?(color||T.accent):T.border}`,background:active?(color||T.accent):T.pill,color:active?"#fff":T.text,fontWeight:active?700:600,fontSize:13,cursor:"pointer",whiteSpace:"nowrap",transition:"all .2s",flexShrink:0,boxShadow:active?`0 4px 14px ${(color||T.accent)}40`:"none" }}>
                   {Icon&&<Icon size={14} aria-hidden="true"/>}{label}
                 </button>
               );
