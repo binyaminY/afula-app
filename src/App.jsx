@@ -118,15 +118,15 @@ const generatePlaces = (cityName) => {
 
 /* ═══════════════════════════════════════ */
 const CATS = {
-  attractions:   { Icon: Star,        label: "אטרקציות",    color: "#0891b2" },
-  nightlife:     { Icon: Wine,        label: "מקומות בילוי",    color: "#db2777" },
-  food:          { Icon: Utensils,    label: "מזון",        color: "#ea580c" },
-  cafes:         { Icon: Utensils,      label: "בתי קפה",     color: "#a16207" },
-  bars:          { Icon: Wine,        label: "ברים, פאבים ומועדונים", color: "#9333ea" },
-  malls:         { Icon: ShoppingBag, label: "מתחמים וקניונים", color: "#d97706" },
-  coffeeSpots:   { Icon: Sun,         label: "מקומות יפים לפק״ל קפה", color: "#16a34a" },
-  culture:       { Icon: Landmark,    label: "תרבות",       color: "#4f46e5" },
-  professionals: { Icon: Wrench,      label: "בעלי מקצוע",  color: "#7c3aed" },
+  attractions:   { Icon: Star,        label: "אטרקציות",    color: "#2d7720" },
+  nightlife:     { Icon: Wine,        label: "מקומות בילוי",    color: "#2d7720" },
+  food:          { Icon: Utensils,    label: "מזון",        color: "#2d7720" },
+  cafes:         { Icon: Utensils,      label: "בתי קפה",     color: "#2d7720" },
+  bars:          { Icon: Wine,        label: "ברים, פאבים ומועדונים", color: "#2d7720" },
+  malls:         { Icon: ShoppingBag, label: "מתחמים וקניונים", color: "#2d7720" },
+  coffeeSpots:   { Icon: Sun,         label: "מקומות יפים לפק״ל קפה", color: "#2d7720" },
+  culture:       { Icon: Landmark,    label: "תרבות",       color: "#2d7720" },
+  professionals: { Icon: Wrench,      label: "בעלי מקצוע",  color: "#2d7720" },
 };
 
 /* ═══════════════════════════════════════
@@ -247,7 +247,7 @@ const DARK = {
 /* ── Small components ── */
 const Strs = ({ r, T, t }) => (
   r === 0 ? (
-    <span style={{ fontSize:11, fontWeight:600, color:"#0369A1", background:"#E0F2FE", padding:"2px 8px", borderRadius:8 }}>{t?.newBadge||"חדש"}</span>
+    <span style={{ fontSize:11, fontWeight:600, color:"#2d7720", background:"#DCFCE7", padding:"2px 8px", borderRadius:8 }}>{t?.newBadge||"חדש"}</span>
   ) : (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
       {[1,2,3,4,5].map(s=><Star key={s} size={13} fill={s<=Math.round(r)?T.star:"none"} stroke={s<=Math.round(r)?T.star:"#f0c8b8"} strokeWidth={2}/>)}
@@ -277,13 +277,13 @@ function Card({ p, cat, favs, toggle, click, T }) {
           onMouseEnter={e=>e.currentTarget.style.transform="scale(1.12)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
           <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#f0c8b8"}/>
         </button>
-        {p.trending&&<div style={{ position:"absolute",top:10,right:10,background:"linear-gradient(135deg,#F59E0B,#EF4444)",color:"#fff",fontSize:9.5,fontWeight:800,padding:"3px 8px",borderRadius:12,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={12}/>טרנדי</div>}
+        {p.trending&&<div style={{ position:"absolute",top:10,right:10,background:"linear-gradient(135deg,#4ade80,#2d7720)",color:"#fff",fontSize:9.5,fontWeight:800,padding:"3px 8px",borderRadius:12,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={12}/>טרנדי</div>}
         {p.date&&<div style={{ position:"absolute",bottom:8,right:10,background:"rgba(0,0,0,.5)",color:"#fff",fontSize:9.5,fontWeight:600,padding:"3px 8px",borderRadius:8,display:"flex",alignItems:"center",gap:3,backdropFilter:"blur(4px)" }}><Clock size={12}/>{p.date}</div>}
       </div>
       <div style={{ padding: "12px 14px 14px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
           <h3 style={{ margin: 0, fontSize: 14.5, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{p.name}</h3>
-          {p.price&&<span style={{ fontSize: 10.5, fontWeight: 700, color: "#059669", background:"#ECFDF5", padding:"2px 6px", borderRadius:6 }}>{p.price}</span>}
+          {p.price&&<span style={{ fontSize: 10.5, fontWeight: 700, color: "#2d7720", background:"#DCFCE7", padding:"2px 6px", borderRadius:6 }}>{p.price}</span>}
         </div>
         <p style={{ margin: "0 0 7px", fontSize: 12, color: T.textSoft, lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.desc}</p>
         <Strs r={p.rating} T={T}/>
@@ -295,16 +295,17 @@ function Card({ p, cat, favs, toggle, click, T }) {
 }
 
 function Modal({ p, cat, close, favs, toggle, T, t }) {
-  if (!p) return null;
-  const f = favs.has(p.name), cc = CATS[cat]?.color||"#888";
   const [imgErr, setImgErr] = useState(false);
   const [lightbox, setLightbox] = useState(false);
   useEffect(() => {
+    if (!p) return;
     const sb = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
     document.body.style.paddingRight = `${sb}px`;
     return () => { document.body.style.overflow = ""; document.body.style.paddingRight = ""; };
-  }, []);
+  }, [p]);
+  if (!p) return null;
+  const f = favs.has(p.name), cc = CATS[cat]?.color||"#888";
   const hasImg = p.img && !imgErr;
   return (
     <>
@@ -333,8 +334,8 @@ function Modal({ p, cat, close, favs, toggle, T, t }) {
           <h2 style={{ margin:"0 0 8px",fontSize:20,fontWeight:800,color:T.text }}>{p.name}</h2>
           <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:14,flexWrap:"wrap" }}>
             <Strs r={p.rating} T={T} t={t}/>
-            {p.price&&<span style={{ fontSize:12,fontWeight:700,color:"#059669",background:"#ECFDF5",padding:"2px 8px",borderRadius:8 }}>{p.price}</span>}
-            {p.trending&&<span style={{ background:"#E0F2FE",color:"#0369A1",fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={12}/>{t?.trending||"טרנדי"}</span>}
+            {p.price&&<span style={{ fontSize:12,fontWeight:700,color:"#2d7720",background:"#DCFCE7",padding:"2px 8px",borderRadius:8 }}>{p.price}</span>}
+            {p.trending&&<span style={{ background:"#DCFCE7",color:"#2d7720",fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,display:"flex",alignItems:"center",gap:3 }}><TrendingUp size={12}/>{t?.trending||"טרנדי"}</span>}
           </div>
           <p style={{ margin:"0 0 16px",fontSize:14,color:T.textSoft,lineHeight:1.7 }}>{p.desc}</p>
           <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
@@ -400,7 +401,6 @@ export default function App() {
   const city = "עפולה";
   const [q, setQ] = useState("");
   const [showSug, setShowSug] = useState(false);
-  const [drop, setDrop] = useState(false);
   const [activeCat, setAC] = useState("all");
   const [favs, setFavs] = useState(new Set());
   const [modal, setModal] = useState(null);
@@ -448,7 +448,7 @@ export default function App() {
       } else {
         setUser(data.user || data); setRegStep(1);
       }
-    } catch (e) {
+    } catch {
       setAuthErr("שגיאת רשת — נסו שוב או היכנסו כאורח");
     }
     setAuthLoading(false);
@@ -464,7 +464,7 @@ export default function App() {
       } else {
         setUser(data.user || data); setPage("app");
       }
-    } catch (e) {
+    } catch {
       setAuthErr("שגיאת רשת — נסו שוב או היכנסו כאורח");
     }
     setAuthLoading(false);
@@ -475,14 +475,14 @@ export default function App() {
   const [customPlaces, setCustomPlaces] = useState({});
 
   const cd = CITIES_DATA[city];
-  const basePlaces = generatePlaces(city);
+  const basePlaces = useMemo(() => generatePlaces(city), [city]);
   const places = useMemo(() => {
     const merged = { ...basePlaces };
     Object.entries(customPlaces).forEach(([cat, items]) => {
       merged[cat] = [...(merged[cat]||[]), ...items];
     });
     return merged;
-  }, [customPlaces]);
+  }, [customPlaces, basePlaces]);
 
   const tog = useCallback(n => setFavs(p => { const s = new Set(p); s.has(n)?s.delete(n):s.add(n); return s; }), []);
 
@@ -540,8 +540,8 @@ export default function App() {
     button{-webkit-tap-highlight-color:transparent;font-family:'Rubik',sans-serif}
     .cat-scroll::-webkit-scrollbar{display:none}
     .cat-scroll{-ms-overflow-style:none;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    *:focus-visible{outline:3px solid #1a6abf;outline-offset:3px;border-radius:4px}
-    .skip-link{position:absolute;top:-999px;right:0;background:#1a6abf;color:#fff;padding:10px 18px;font-size:15px;font-weight:700;border-radius:0 0 8px 8px;z-index:9999;text-decoration:none;font-family:'Rubik',sans-serif}
+    *:focus-visible{outline:3px solid #2d7720;outline-offset:3px;border-radius:4px}
+    .skip-link{position:absolute;top:-999px;right:0;background:#2d7720;color:#fff;padding:10px 18px;font-size:15px;font-weight:700;border-radius:0 0 8px 8px;z-index:9999;text-decoration:none;font-family:'Rubik',sans-serif}
     .skip-link:focus{top:0}
     .a11y-fab{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);transition:background .2s}
     .a11y-fab:hover{background:rgba(255,255,255,.35)}
@@ -550,15 +550,15 @@ export default function App() {
     .a11y-panel-title{font-size:14px;font-weight:800;color:#1A1A1A;margin:0 0 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #F0F0F0;padding-bottom:10px}
     .a11y-option{display:flex;align-items:center;justify-content:space-between;padding:9px 4px;border-bottom:1px solid #F7F7F7;cursor:pointer;border-radius:8px;transition:background .12s}
     .a11y-option:last-child{border-bottom:none}
-    .a11y-option:hover{background:#F3F8FF}
+    .a11y-option:hover{background:#F0FDF4}
     .a11y-option-label{font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:8px}
     .a11y-toggle{width:38px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
     .a11y-toggle::after{content:'';position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-    .a11y-toggle[aria-checked="true"]{background:#1a6abf}
+    .a11y-toggle[aria-checked="true"]{background:#2d7720}
     .a11y-toggle[aria-checked="true"]::after{transform:translateX(-16px)}
     .a11y-toggle[aria-checked="false"]{background:#D1D5DB}
-    .a11y-reset{width:100%;margin-top:12px;padding:9px;background:#F3F8FF;border:1.5px solid #BFDBFE;border-radius:10px;color:#1a6abf;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Rubik',sans-serif}
-    .a11y-reset:hover{background:#DBEAFE}
+    .a11y-reset{width:100%;margin-top:12px;padding:9px;background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;color:#2d7720;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Rubik',sans-serif}
+    .a11y-reset:hover{background:#DCFCE7}
     body.large-text{font-size:110%!important}
     body.grayscale-mode{filter:grayscale(1)}
     body.underline-links a,body.underline-links [role="link"],body.underline-links [role="button"]{text-decoration:underline!important;text-underline-offset:3px}
@@ -566,7 +566,7 @@ export default function App() {
 
   // ─── REGISTRATION PAGE ───
   if (page === "register" || page === "login") return (
-    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:"linear-gradient(135deg, #2d7720, #1a6abf)",display:"flex",alignItems:"center",justifyContent:"center",padding:20 }}>
+    <div dir={t.dir} style={{ fontFamily:"'Rubik',sans-serif",minHeight:"100vh",background:"linear-gradient(135deg, #4ade80, #2d7720)",display:"flex",alignItems:"center",justifyContent:"center",padding:20 }}>
       <style>{css}</style>
       {/* Language picker */}
       <div style={{ position:"fixed",top:16,right:16,display:"flex",gap:6,zIndex:100 }}>
@@ -610,7 +610,7 @@ export default function App() {
                   <input aria-label={t.passwordPlaceholder} value={regForm.password} onChange={e=>setRegForm({...regForm,password:e.target.value})} placeholder={t.passwordPlaceholder} type="password" dir="ltr" style={{ width:"100%",padding:"14px 18px",background:"#F9FAFB",border:"1.5px solid #E5E7EB",borderRadius:14,fontSize:16,fontFamily:"'Rubik'",color:"#1A1A1A",outline:"none",textAlign:"left",boxSizing:"border-box",transition:"border .2s" }} onFocus={e=>e.target.style.borderColor="#2d7720"} onBlur={e=>e.target.style.borderColor="#E5E7EB"}/>
                 </label>
 
-                <button onClick={page==="login"?handleSignIn:handleSignUp} disabled={authLoading} style={{ width:"100%",padding:"16px",background:"linear-gradient(135deg, #2d7720, #1a6abf)",color:"#fff",border:"none",borderRadius:14,fontSize:17,fontWeight:700,fontFamily:"'Rubik'",cursor:authLoading?"default":"pointer",opacity:authLoading?.6:1,transition:"all .2s",marginTop:4 }}>
+                <button onClick={page==="login"?handleSignIn:handleSignUp} disabled={authLoading} style={{ width:"100%",padding:"16px",background:"linear-gradient(135deg, #4ade80, #2d7720)",color:"#fff",border:"none",borderRadius:14,fontSize:17,fontWeight:700,fontFamily:"'Rubik'",cursor:authLoading?"default":"pointer",opacity:authLoading?.6:1,transition:"all .2s",marginTop:4 }}>
                   {authLoading?"⏳":page==="login"?t.login:t.register}
                 </button>
               </div>
@@ -668,7 +668,7 @@ export default function App() {
       {addPlaceOpen&&(
         <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(8px)" }} onClick={()=>setAddPlaceOpen(false)}>
           <div onClick={e=>e.stopPropagation()} style={{ background:T.surface,borderRadius:20,maxWidth:460,width:"100%",overflow:"hidden",boxShadow:"0 24px 64px rgba(0,0,0,.25)",animation:"modalIn .3s ease" }}>
-            <div style={{ background:"linear-gradient(135deg,#2d7720,#1a6abf)",padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between" }}>
+            <div style={{ background:"linear-gradient(135deg,#4ade80,#2d7720)",padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between" }}>
               <span style={{ color:"#fff",fontSize:18,fontWeight:800 }}>➕ {t.addPlace}</span>
               <button onClick={()=>setAddPlaceOpen(false)} style={{ background:"rgba(255,255,255,.2)",border:"none",borderRadius:"50%",width:32,height:32,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}><X size={16} color="#fff"/></button>
             </div>
@@ -692,7 +692,7 @@ export default function App() {
                   {Object.entries(CATS).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
                 </select>
               </div>
-              <button onClick={submitPlace} style={{ marginTop:4,padding:"13px",borderRadius:14,background:"linear-gradient(135deg,#2d7720,#1a6abf)",border:"none",color:"#fff",fontSize:15,fontWeight:700,fontFamily:"'Rubik'",cursor:"pointer",boxShadow:"0 4px 16px rgba(45,119,32,.3)" }}>
+              <button onClick={submitPlace} style={{ marginTop:4,padding:"13px",borderRadius:14,background:"linear-gradient(135deg,#4ade80,#2d7720)",border:"none",color:"#fff",fontSize:15,fontWeight:700,fontFamily:"'Rubik'",cursor:"pointer",boxShadow:"0 4px 16px rgba(45,119,32,.3)" }}>
                 {t.savePlace}
               </button>
             </div>
@@ -703,8 +703,7 @@ export default function App() {
       {/* ── Hero ── */}
       <div style={{ position:"relative",overflow:"hidden",minHeight:460 }}>
         <img src={cd.photo} alt="" onError={e=>{e.target.style.display="none"}} style={{ position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",transform:"scale(1.04)" }}/>
-        <div style={{ position:"absolute",inset:0,background:"linear-gradient(160deg, rgba(26,106,31,.95) 0%, rgba(29,106,191,.88) 60%, rgba(20,80,160,.95) 100%)" }}/>
-        <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 30% 0%, rgba(245,162,0,.15) 0%, transparent 60%)" }}/>
+        <div style={{ position:"absolute",inset:0,background:"linear-gradient(160deg, rgba(74,222,128,.55) 0%, rgba(20,66,20,.88) 100%)" }}/>
         <div style={{ position:"absolute",bottom:0,left:0,right:0,height:80,background:`linear-gradient(to top, ${T.bg}, transparent)` }}/>
 
         {/* ── Top bar ── */}
@@ -737,7 +736,7 @@ export default function App() {
                     <button onClick={()=>setDarkMode(d=>!d)} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:T.text,fontFamily:"'Rubik'",fontWeight:600 }}
                       onMouseEnter={e=>e.currentTarget.style.background=darkMode?"#1E293B":"#F8FAFC"}
                       onMouseLeave={e=>e.currentTarget.style.background="none"}>
-                      {darkMode ? <Sun size={15} color="#F59E0B"/> : <Moon size={15} color="#1a6abf"/>}
+                      {darkMode ? <Sun size={15} color="#64748B"/> : <Moon size={15} color="#64748B"/>}
                       {darkMode ? t.dayMode : t.nightMode}
                     </button>
                     <button onClick={()=>{setPage("register");setSettingsOpen(false);}} style={{ width:"100%",padding:"11px 16px",background:"none",border:"none",display:"flex",alignItems:"center",gap:10,cursor:"pointer",fontSize:13,color:"#DC2626",fontFamily:"'Rubik'",fontWeight:600 }}
@@ -870,7 +869,7 @@ export default function App() {
         {trending.length>0&&activeCat==="all"&&!fOnly&&(
           <div style={{ marginBottom:40 }}>
             <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:18 }}>
-              <div style={{ width:4,height:22,borderRadius:4,background:"linear-gradient(180deg,#F59E0B,#EF4444)" }}/>
+              <div style={{ width:4,height:22,borderRadius:4,background:"linear-gradient(180deg,#4ade80,#2d7720)" }}/>
               <h2 style={{ margin:0,fontSize:20,fontWeight:800,color:T.text }}>{t.hotPlaces}</h2>
               <span className="emoji" style={{ fontSize:20 }}>🔥</span>
             </div>
@@ -945,7 +944,7 @@ export default function App() {
                                     <span className="emoji" style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>
                                   )}
                                   {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
-                                  {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
+                                  {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#2d7720",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
                                   <button onClick={e=>{e.stopPropagation();tog(p.name)}} aria-label={f?`הסר ${p.name} ממועדפים`:`הוסף ${p.name} למועדפים`} aria-pressed={f} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
                                     <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"} aria-hidden="true"/>
                                   </button>
@@ -979,7 +978,7 @@ export default function App() {
                               <span className="emoji" style={{ fontSize:48, lineHeight: 1, display: "block" }}>{p.icon}</span>
                             )}
                             {hasImg&&<div style={{ position:"absolute",inset:0,background:"linear-gradient(transparent 50%, rgba(0,0,0,0.3))" }}/>}
-                            {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#059669",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
+                            {p.price&&<div style={{ position:"absolute",top:8,right:8,background:"rgba(255,255,255,.92)",color:"#2d7720",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:6 }}>{p.price}</div>}
                             <button onClick={e=>{e.stopPropagation();tog(p.name)}} style={{ position:"absolute",top:8,left:8,background:"rgba(255,255,255,.92)",border:"none",borderRadius:"50%",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 1px 6px rgba(0,0,0,.08)" }}>
                               <Heart size={14} fill={f?"#E8613C":"none"} stroke={f?"#E8613C":"#ccc"}/>
                             </button>
@@ -1015,13 +1014,13 @@ export default function App() {
             </div>
             <h3 style={{ fontSize:14,fontWeight:700,color:T.text,marginBottom:10,display:"flex",alignItems:"center",gap:6 }}><Award size={14} color={T.accent}/>{t.mustSee}</h3>
             <div style={{ display:"flex",flexWrap:"wrap",gap:8 }}>
-              {cd.landmarks.map((l,i)=>(<span key={i} style={{ padding:"5px 14px",background:T.accentSoft,color:"#0369A1",borderRadius:20,fontSize:12.5,fontWeight:700 }}>{l}</span>))}
+              {cd.landmarks.map((l,i)=>(<span key={i} style={{ padding:"5px 14px",background:T.accentSoft,color:"#2d7720",borderRadius:20,fontSize:12.5,fontWeight:700 }}>{l}</span>))}
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{ background:"linear-gradient(135deg, #2d7720, #1a6abf)",padding:"36px 24px",textAlign:"center" }}>
+      <div style={{ background:"linear-gradient(135deg, #4ade80, #2d7720)",padding:"36px 24px",textAlign:"center" }}>
         <div style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:6 }}>
           <span style={{ color:"rgba(255,255,255,.95)",fontSize:22,fontWeight:800,letterSpacing:"-0.5px" }}>AfulaGo</span>
         </div>
