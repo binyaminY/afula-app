@@ -1,16 +1,24 @@
-# React + Vite
+# AfulaGo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Wolt-style guide to Afula and the Jezreel Valley: restaurants, cafés, fun, nature, culture, shopping and essentials, in Hebrew, English and Russian.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev      # local dev server
+npm run build    # production build in dist/
+npm run lint
+```
 
-## React Compiler
+## Where things live
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/data/places.js`: every place (name, category, address, phone, tags, `source`), plus the categories and the home-screen collections. Collected in October 2026 from public directories and articles; each place links its source.
+- `src/data/city.js`: facts about the city (stats, timeline, neighborhoods) with sources.
+- `src/i18n.js`: interface strings for he / en / ru.
+- `src/index.css`: design tokens (WhatsApp bottle green), light / dark, accessibility modes and all components.
+- `src/components/`, `src/views/`: UI. `Logo.jsx` holds the logo; `public/favicon.svg` is the same mark as a file.
 
-## Expanding the ESLint configuration
+Saved places, places people add, language, theme and accessibility settings are stored in the browser (localStorage). The optional account uses Supabase auth.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+To add a place, add an object to `PLACES` with a unique `id`, a `cat` from `CATEGORIES`, and a `source` URL.

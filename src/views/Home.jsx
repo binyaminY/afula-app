@@ -1,0 +1,75 @@
+import { Search, Sparkles } from "lucide-react";
+import { HeroArt } from "../components/HeroArt";
+import { PlaceCard } from "../components/PlaceCard";
+import { CATEGORIES, COLLECTIONS } from "../data/places";
+
+function Rail({ title, places, onSeeAll, cardProps, t }) {
+  if (!places.length) return null;
+  return (
+    <section className="section" aria-label={title}>
+      <div className="section-head">
+        <h2>{title}</h2>
+        {onSeeAll && <button type="button" className="see-all" onClick={onSeeAll}>{t.seeAll} ({places.length})</button>}
+      </div>
+      <div className="rail">
+        {places.map(p => <PlaceCard key={p.id} place={p} {...cardProps(p)} />)}
+      </div>
+    </section>
+  );
+}
+
+export function Home({ t, lang, places, onSearch, onCategory, goCity, openPlace, cardProps }) {
+  const byId = Object.fromEntries(places.map(p => [p.id, p]));
+  const promos = [
+    { key: "centennial", emoji: "🎉", title: t.promoCentennial, sub: t.promoCentennialSub, bg: "linear-gradient(135deg,#075E54,#128C7E)", onClick: goCity },
+    { key: "movie", emoji: "🍿", title: t.promoMovie, sub: t.promoMovieSub, bg: "linear-gradient(135deg,#3B2B8F,#6A4CC2)", onClick: () => openPlace("movieland") },
+    { key: "spring", emoji: "💧", title: t.promoSpring, sub: t.promoSpringSub, bg: "linear-gradient(135deg,#0E7490,#22A6C7)", onClick: () => openPlace("maayan-harod") },
+  ].filter(p => p.key === "centennial" || byId[p.key === "movie" ? "movieland" : "maayan-harod"]);
+
+  return (
+    <>
+      <section className="hero" aria-labelledby="hero-title">
+        <HeroArt />
+        <span className="hero-kicker"><Sparkles size={14} aria-hidden="true" />{t.location}</span>
+        <h1 id="hero-title">{t.heroTitle}</h1>
+        <p>{t.heroSub}</p>
+        <form className="search" role="search" onSubmit={e => { e.preventDefault(); onSearch(new FormData(e.currentTarget).get("q") || ""); }}>
+          <input name="q" type="search" placeholder={t.search} aria-label={t.search} autoComplete="off" />
+          <button type="submit" className="search-go" aria-label={t.tabSearch}><Search size={20} aria-hidden="true" /></button>
+        </form>
+        <div className="hero-count">{t.placesCount(places.length)}</div>
+      </section>
+
+      <div className="promo-row">
+        {promos.map(p => (
+          <button key={p.key} type="button" className="promo" style={{ background: p.bg }} onClick={p.onClick}>
+            <span className="promo-emoji emoji" aria-hidden="true">{p.emoji}</span>
+            <strong>{p.title}</strong>
+            <span>{p.sub}</span>
+          </button>
+        ))}
+      </div>
+
+      <section className="section" aria-labelledby="cats-title">
+        <div className="section-head"><h2 id="cats-title">{t.categories}</h2></div>
+        <div className="cat-rail">
+          {CATEGORIES.map(c => (
+            <button key={c.id} type="button" className="cat-tile" onClick={() => onCategory(c.id)} style={{ "--tint": c.tint }}>
+              <span className="cat-icon emoji" aria-hidden="true">{c.emoji}</span>
+              {c.label[lang]}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {COLLECTIONS.map(col => (
+        <Rail key={col.id} title={col.title[lang]} places={places.filter(col.pick)} cardProps={cardProps} t={t} />
+      ))}
+
+      {CATEGORIES.map(c => (
+        <Rail key={c.id} title={`${c.emoji} ${c.label[lang]}`} places={places.filter(p => p.cat === c.id)}
+          onSeeAll={() => onCategory(c.id)} cardProps={cardProps} t={t} />
+      ))}
+    </>
+  );
+}
