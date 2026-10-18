@@ -12,7 +12,7 @@ export function City({ t }) {
         <p lang="he">{CITY.intro}</p>
       </section>
 
-      <section className="section" aria-label={t.aboutTitle}>
+      <section className="section">
         <div className="stats" lang="he">
           {CITY.stats.map(s => (
             <div key={s.label} className="stat"><strong>{s.value}</strong><span>{s.label}</span>{s.note && <small>{s.note}</small>}</div>

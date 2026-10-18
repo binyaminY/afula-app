@@ -10,6 +10,7 @@ export function PlaceSheet({ place, category, saved, onToggleSave, onClose, noti
     if (result === "copied") notify(t.copied);
   };
   const tags = place.tags.filter(tag => TAG_LABELS[tag]);
+  const content = place.mine ? undefined : "he";
 
   return (
     <Sheet labelledBy={titleId} onClose={onClose}>
@@ -23,14 +24,14 @@ export function PlaceSheet({ place, category, saved, onToggleSave, onClose, noti
       </div>
 
       <div className="sheet-body">
-        <h2 id={titleId}>{place.name}</h2>
+        <h2 id={titleId} lang={content}>{place.name}</h2>
         <div className="sheet-sub">
           <span className="tag">{category?.emoji} {category?.label[lang]}</span>
           {place.sub && <span className="tag">{place.sub}</span>}
           {place.nearby && <span className="tag">{t.nearby}</span>}
           {tags.map(tag => <span key={tag} className="tag">{TAG_LABELS[tag][lang]}</span>)}
         </div>
-        <p className="sheet-desc">{place.desc}</p>
+        <p className="sheet-desc" lang={content}>{place.desc}</p>
 
         <div className="actions">
           <a className="action" href={wazeUrl(place)} target="_blank" rel="noopener noreferrer">
@@ -55,12 +56,12 @@ export function PlaceSheet({ place, category, saved, onToggleSave, onClose, noti
         </div>
 
         <div className="info">
-          <div className="info-row"><MapPin size={18} aria-hidden="true" /><div><small>{t.address}</small>{place.address}</div></div>
+          <div className="info-row"><MapPin size={18} aria-hidden="true" /><div><small>{t.address}</small><span lang={content}>{place.address}</span></div></div>
           {place.phone && (
             <div className="info-row"><Phone size={18} aria-hidden="true" /><div><small>{t.phone}</small><a href={telUrl(place.phone)} dir="ltr">{place.phone}</a></div></div>
           )}
           {place.hours && (
-            <div className="info-row"><Clock size={18} aria-hidden="true" /><div><small>{t.hours}</small>{place.hours}</div></div>
+            <div className="info-row"><Clock size={18} aria-hidden="true" /><div><small>{t.hours}</small><span lang={content}>{place.hours}</span></div></div>
           )}
           {place.source && (
             <div className="info-row"><ExternalLink size={18} aria-hidden="true" /><div><small>{t.source}</small>

@@ -76,7 +76,7 @@ export function SearchView({ t, lang, places, query, setQuery, cat, setCat, tags
         {results.length ? t.results(results.length) : ""}
       </p>
       {results.length ? (
-        <div className="grid">{results.map(p => <PlaceCard key={p.id} place={p} {...cardProps(p)} />)}</div>
+        <div className="grid">{results.map(p => <PlaceCard key={p.id} place={p} {...cardProps(p)} level={2} />)}</div>
       ) : (
         <div className="empty">
           <div className="emoji" aria-hidden="true">🔎</div>

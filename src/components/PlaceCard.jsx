@@ -4,7 +4,9 @@ import { TAG_LABELS } from "../data/places";
 // One place, Wolt style: a colorful art area with the place's emoji, a heart
 // to save it, and name / one-line description / address below. The whole card
 // opens the details; the heart is a separate control on top.
-export function PlaceCard({ place, category, saved, onToggleSave, onOpen, t, lang }) {
+export function PlaceCard({ place, category, saved, onToggleSave, onOpen, t, lang, level = 3 }) {
+  const Heading = `h${level}`;
+  const content = place.mine ? undefined : "he";
   const badges = [];
   if (place.tags.includes("new")) badges.push({ key: "new", cls: "badge new" });
   if (place.tags.includes("free")) badges.push({ key: "free", cls: "badge" });
@@ -21,11 +23,11 @@ export function PlaceCard({ place, category, saved, onToggleSave, onOpen, t, lan
         )}
       </div>
       <div className="card-body">
-        <h3 className="card-title">{place.name}</h3>
-        <p className="card-desc">{place.desc}</p>
+        <Heading className="card-title" lang={content}>{place.name}</Heading>
+        <p className="card-desc" lang={content}>{place.desc}</p>
         <div className="card-meta">
           <MapPin size={13} aria-hidden="true" />
-          <span>{place.address}</span>
+          <span lang={content}>{place.address}</span>
         </div>
       </div>
       <button type="button" className="card-link" onClick={() => onOpen(place.id)}

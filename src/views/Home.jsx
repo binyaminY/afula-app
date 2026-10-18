@@ -1,6 +1,7 @@
 import { Search, Sparkles } from "lucide-react";
 import { HeroArt } from "../components/HeroArt";
 import { LogoMark } from "../components/Logo";
+import { PromoCarousel } from "../components/PromoCarousel";
 import { PlaceCard } from "../components/PlaceCard";
 import { CATEGORIES, COLLECTIONS } from "../data/places";
 
@@ -21,11 +22,14 @@ function Rail({ title, places, onSeeAll, cardProps, t }) {
 
 export function Home({ t, lang, places, onSearch, onCategory, goCity, openPlace, cardProps }) {
   const byId = Object.fromEntries(places.map(p => [p.id, p]));
-  const promos = [
+  const slides = [
     { key: "centennial", emoji: "🎉", title: t.promoCentennial, sub: t.promoCentennialSub, bg: "linear-gradient(135deg,#075E54,#128C7E)", onClick: goCity },
-    { key: "movie", emoji: "🍿", title: t.promoMovie, sub: t.promoMovieSub, bg: "linear-gradient(135deg,#3B2B8F,#6A4CC2)", onClick: () => openPlace("movieland") },
-    { key: "spring", emoji: "💧", title: t.promoSpring, sub: t.promoSpringSub, bg: "linear-gradient(135deg,#0E7490,#22A6C7)", onClick: () => openPlace("maayan-harod") },
-  ].filter(p => p.key === "centennial" || byId[p.key === "movie" ? "movieland" : "maayan-harod"]);
+    { key: "movieland", emoji: "🍿", title: t.promoMovie, sub: t.promoMovieSub, bg: "linear-gradient(135deg,#3B2B8F,#6A4CC2)", onClick: () => openPlace("movieland") },
+    { key: "maayan-harod", emoji: "💧", title: t.promoSpring, sub: t.promoSpringSub, bg: "linear-gradient(135deg,#0E7490,#22A6C7)", onClick: () => openPlace("maayan-harod") },
+    { key: "glitz", emoji: "🏊", title: t.promoGlitz, sub: t.promoGlitzSub, bg: "linear-gradient(135deg,#0F6BB0,#2E9BE0)", onClick: () => openPlace("glitz") },
+    { key: "park-chai", emoji: "🦚", title: t.promoPark, sub: t.promoParkSub, bg: "linear-gradient(135deg,#2F7D32,#5DB761)", onClick: () => openPlace("park-chai") },
+    { key: "old-market", emoji: "🌙", title: t.promoMarket, sub: t.promoMarketSub, bg: "linear-gradient(135deg,#7A3E1D,#C0682F)", onClick: () => openPlace("old-market") },
+  ].filter(s => s.key === "centennial" || byId[s.key]);
 
   return (
     <>
@@ -42,15 +46,7 @@ export function Home({ t, lang, places, onSearch, onCategory, goCity, openPlace,
         <div className="hero-count">{t.placesCount(places.length)}</div>
       </section>
 
-      <div className="promo-row">
-        {promos.map(p => (
-          <button key={p.key} type="button" className="promo" style={{ background: p.bg }} onClick={p.onClick}>
-            <span className="promo-emoji emoji" aria-hidden="true">{p.emoji}</span>
-            <strong>{p.title}</strong>
-            <span>{p.sub}</span>
-          </button>
-        ))}
-      </div>
+      <PromoCarousel slides={slides} t={t} dir={t.dir} />
 
       <section className="section" aria-labelledby="cats-title">
         <div className="section-head"><h2 id="cats-title">{t.categories}</h2></div>

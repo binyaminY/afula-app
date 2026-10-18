@@ -40,7 +40,7 @@ export function Saved({ t, lang, savedPlaces, myPlaces, onAdd, onRemove, cardPro
       <section className="section" aria-labelledby="saved-title">
         <div className="section-head"><h1 id="saved-title" style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>{t.saved}</h1></div>
         {savedPlaces.length ? (
-          <div className="grid">{savedPlaces.map(p => <PlaceCard key={p.id} place={p} {...cardProps(p)} />)}</div>
+          <div className="grid">{savedPlaces.map(p => <PlaceCard key={p.id} place={p} {...cardProps(p)} level={2} />)}</div>
         ) : (
           <div className="empty panel"><div className="emoji" aria-hidden="true">💚</div><p>{t.savedEmpty}</p></div>
         )}
@@ -57,7 +57,7 @@ export function Saved({ t, lang, savedPlaces, myPlaces, onAdd, onRemove, cardPro
           <div className="grid">
             {myPlaces.map(p => (
               <div key={p.id} style={{ position: "relative" }}>
-                <PlaceCard place={p} {...cardProps(p)} />
+                <PlaceCard place={p} {...cardProps(p)} level={3} />
                 <button type="button" className="btn btn-ghost" style={{ marginTop: 8, minHeight: 38, width: "100%" }} onClick={() => onRemove(p.id)}>
                   <Trash2 size={16} aria-hidden="true" />{t.remove}
                 </button>
