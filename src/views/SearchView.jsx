@@ -18,14 +18,25 @@ const FILTER_TAGS = ["kosher", "free", "kids", "breakfast", "evening"];
 
 export function SearchView({ t, lang, places, query, setQuery, cat, setCat, tags, setTags, cardProps, autoFocus }) {
   const input = useRef(null);
+  const catRow = useRef(null);
   useEffect(() => { if (autoFocus) input.current?.focus(); }, [autoFocus]);
 
-  const results = places.filter(p =>
+  // The chosen category can sit off-screen in the scrolling row (a tile on the
+  // home screen picks it); bring it into view without moving the page.
+  useEffect(() => {
+    catRow.current?.querySelector('.chip[aria-pressed="true"]')?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [cat]);
+
+  // Places that pass the category, the search text and the given tags.
+  const filter = (tagList) => places.filter(p =>
     (cat === "all" || p.cat === cat) &&
-    tags.every(tag => p.tags.includes(tag)) &&
+    tagList.every(tag => p.tags.includes(tag)) &&
     matches(p, query, lang));
 
+  const results = filter(tags);
   const toggleTag = (tag) => setTags(tags.includes(tag) ? tags.filter(x => x !== tag) : [...tags, tag]);
+  const clearAll = () => { setQuery(""); setCat("all"); setTags([]); };
+  const filtered = Boolean(query.trim()) || cat !== "all" || tags.length > 0;
 
   return (
     <section className="section" aria-labelledby="search-title" style={{ marginTop: 16 }}>
@@ -40,7 +51,7 @@ export function SearchView({ t, lang, places, query, setQuery, cat, setCat, tags
         )}
       </form>
 
-      <div className="chips" role="group" aria-label={t.categories} style={{ marginTop: 14 }}>
+      <div ref={catRow} className="chips" role="group" aria-label={t.categories} style={{ marginTop: 14 }}>
         <button type="button" className="chip" aria-pressed={cat === "all"} onClick={() => setCat("all")}>{t.all}</button>
         {CATEGORIES.map(c => (
           <button key={c.id} type="button" className="chip" aria-pressed={cat === c.id} onClick={() => setCat(c.id)}>
@@ -49,9 +60,16 @@ export function SearchView({ t, lang, places, query, setQuery, cat, setCat, tags
         ))}
       </div>
       <div className="chips" role="group" aria-label={t.filters}>
-        {FILTER_TAGS.map(tag => (
-          <button key={tag} type="button" className="chip" aria-pressed={tags.includes(tag)} onClick={() => toggleTag(tag)}>{TAG_LABELS[tag][lang]}</button>
-        ))}
+        {FILTER_TAGS.map(tag => {
+          const on = tags.includes(tag);
+          // A filter that would leave nothing is disabled, so you can't pick a dead end.
+          const dead = !on && filter([...tags, tag]).length === 0;
+          return (
+            <button key={tag} type="button" className="chip" aria-pressed={on} disabled={dead} onClick={() => toggleTag(tag)}>
+              {TAG_LABELS[tag][lang]}
+            </button>
+          );
+        })}
       </div>
 
       <p role="status" style={{ margin: "4px 0 12px", color: "var(--muted)", fontWeight: 600, fontSize: ".9rem" }}>
@@ -60,7 +78,11 @@ export function SearchView({ t, lang, places, query, setQuery, cat, setCat, tags
       {results.length ? (
         <div className="grid">{results.map(p => <PlaceCard key={p.id} place={p} {...cardProps(p)} />)}</div>
       ) : (
-        <div className="empty"><div className="emoji" aria-hidden="true">🔎</div><p>{t.noResults(query || "")}</p></div>
+        <div className="empty">
+          <div className="emoji" aria-hidden="true">🔎</div>
+          <p>{query.trim() ? t.noResults(query.trim()) : t.noMatches}</p>
+          {filtered && <button type="button" className="btn btn-ghost" style={{ marginTop: 8 }} onClick={clearAll}>{t.clearFilters}</button>}
+        </div>
       )}
     </section>
   );

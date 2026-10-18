@@ -51,12 +51,28 @@ export default function App() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#111B21" : "#075E54");
   }, [lang, t.dir, theme, a11y]);
 
-  // Shared links open a place: …/#place=movieland
+  // Back button: every screen, category and open place is a history entry, so
+  // Back returns to the previous view instead of leaving the site. A shared
+  // link (#place=…) opens its place on top of the home screen.
   useEffect(() => {
-    const onHash = () => setOpenId(placeFromHash());
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    const home = { tab: "home", cat: "all", query: "", tags: [], place: null };
+    const sharedPlace = placeFromHash();
+    if (history.state?.place !== sharedPlace) history.replaceState(home, "", location.pathname + location.search);
+    if (sharedPlace && history.state?.place !== sharedPlace) history.pushState({ ...home, place: sharedPlace }, "", `#place=${encodeURIComponent(sharedPlace)}`);
+
+    const onPop = (e) => {
+      const s = e.state || { ...home, place: placeFromHash() };
+      setTab(s.tab); setCat(s.cat); setQuery(s.query); setTags(s.tags); setOpenId(s.place);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, []);
+
+  // Filters changed inside the search screen belong to the current entry.
+  useEffect(() => {
+    if (tab !== "search" || !history.state) return;
+    history.replaceState({ ...history.state, cat, query, tags }, "");
+  }, [tab, cat, query, tags]);
 
   useEffect(() => { window.scrollTo({ top: 0 }); }, [tab]);
 
@@ -73,13 +89,18 @@ export default function App() {
     setSavedIds(ids => (ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id]));
   }, []);
 
+  const pushView = (view) => {
+    const url = view.place ? `#place=${encodeURIComponent(view.place)}` : location.pathname + location.search;
+    history.pushState(view, "", url);
+  };
   const openPlace = (id) => {
     setOpenId(id);
-    history.replaceState(null, "", `#place=${encodeURIComponent(id)}`);
+    pushView({ tab, cat, query, tags, place: id });
   };
   const closePlace = () => {
-    setOpenId(null);
-    history.replaceState(null, "", location.pathname + location.search);
+    // The sheet is its own history entry, so closing it is a step back.
+    if (history.state?.place) history.back();
+    else setOpenId(null);
   };
 
   const cardProps = (p) => ({
@@ -90,8 +111,14 @@ export default function App() {
     setQuery(q); setCat(category); setTags([]);
     setFocusSearch(!q && category === "all");
     setTab("search");
+    pushView({ tab: "search", cat: category, query: q, tags: [], place: null });
   };
-  const goTab = (id) => (id === "search" ? goSearch(query, cat) : setTab(id));
+  const goTab = (id) => {
+    if (id === "search") { if (tab !== "search") goSearch(query, cat); return; }
+    if (id === tab && !openId) return;
+    setTab(id);
+    pushView({ tab: id, cat, query, tags, place: null });
+  };
 
   const addPlace = (form) => {
     const id = `mine-${Date.now()}`;
@@ -118,7 +145,7 @@ export default function App() {
       <main id="main" className="container" tabIndex={-1} style={{ outline: "none" }}>
         {tab === "home" && (
           <Home t={t} lang={lang} places={places} onSearch={(q) => goSearch(q)} onCategory={(c) => goSearch("", c)}
-            goCity={() => setTab("city")} openPlace={openPlace} cardProps={cardProps} />
+            goCity={() => goTab("city")} openPlace={openPlace} cardProps={cardProps} />
         )}
         {tab === "search" && (
           <SearchView t={t} lang={lang} places={places} query={query} setQuery={setQuery} cat={cat} setCat={setCat}
