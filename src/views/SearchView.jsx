@@ -54,7 +54,7 @@ export function SearchView({ t, lang, places, query, setQuery, cat, setCat, tags
       <div ref={catRow} className="chips" role="group" aria-label={t.categories} style={{ marginTop: 14 }}>
         <button type="button" className="chip" aria-pressed={cat === "all"} onClick={() => setCat("all")}>{t.all}</button>
         {CATEGORIES.map(c => (
-          <button key={c.id} type="button" className="chip" aria-pressed={cat === c.id} onClick={() => setCat(c.id)}>
+          <button key={c.id} type="button" className="chip" aria-pressed={cat === c.id} onClick={() => setCat(cat === c.id ? "all" : c.id)}>
             <span className="emoji" aria-hidden="true">{c.emoji}</span>{c.label[lang]}
           </button>
         ))}
