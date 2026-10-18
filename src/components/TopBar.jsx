@@ -33,7 +33,7 @@ export function TopBar({ t, lang, setLang, theme, toggleTheme, a11y, setA11y, us
     <header className="topbar">
       <div className="container topbar-inner">
         <button type="button" className="brand" onClick={() => setTab("home")} aria-label="AfulaGo">
-          <Logo size={48} />
+          <Logo size={56} />
         </button>
         <span className="loc-pill"><MapPin size={15} aria-hidden="true" />{t.location}</span>
         <nav className="top-nav" aria-label={t.tabHome}>

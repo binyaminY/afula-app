@@ -1,5 +1,6 @@
 import { Search, Sparkles } from "lucide-react";
 import { HeroArt } from "../components/HeroArt";
+import { LogoMark } from "../components/Logo";
 import { PlaceCard } from "../components/PlaceCard";
 import { CATEGORIES, COLLECTIONS } from "../data/places";
 
@@ -30,6 +31,7 @@ export function Home({ t, lang, places, onSearch, onCategory, goCity, openPlace,
     <>
       <section className="hero" aria-labelledby="hero-title">
         <HeroArt />
+        <span className="hero-logo"><LogoMark size={92} /></span>
         <span className="hero-kicker"><Sparkles size={14} aria-hidden="true" />{t.location}</span>
         <h1 id="hero-title">{t.heroTitle}</h1>
         <p>{t.heroSub}</p>
