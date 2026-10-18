@@ -1,4 +1,4 @@
-import { Search, Sparkles } from "lucide-react";
+import { Search } from "lucide-react";
 import { HeroArt } from "../components/HeroArt";
 import { LogoMark } from "../components/Logo";
 import { PromoCarousel } from "../components/PromoCarousel";
@@ -36,7 +36,6 @@ export function Home({ t, lang, places, onSearch, onCategory, goCity, openPlace,
       <section className="hero" aria-labelledby="hero-title">
         <HeroArt />
         <span className="hero-logo"><LogoMark size={92} /></span>
-        <span className="hero-kicker"><Sparkles size={14} aria-hidden="true" />{t.location}</span>
         <h1 id="hero-title">{t.heroTitle}</h1>
         <p>{t.heroSub}</p>
         <form className="search" role="search" onSubmit={e => { e.preventDefault(); onSearch(new FormData(e.currentTarget).get("q") || ""); }}>

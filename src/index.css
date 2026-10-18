@@ -130,12 +130,6 @@ img, svg { display: block; }
 .brand { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; color: var(--text); }
 .brand-word { font-size: 1.3rem; font-weight: 800; letter-spacing: -.02em; direction: ltr; }
 .brand-word b { color: var(--brand-600); font-weight: 800; }
-.loc-pill {
-  display: inline-flex; align-items: center; gap: 6px; min-width: 0; flex: 0 1 auto;
-  padding: .45rem .85rem; border-radius: 999px; border: 0;
-  background: var(--brand-50); color: var(--brand-800); font-weight: 600; font-size: .9rem;
-}
-:root[data-theme="dark"] .loc-pill { color: var(--brand-400); }
 .top-nav { display: none; gap: 4px; margin-inline-start: 8px; }
 .top-nav button {
   border: 0; background: none; padding: .5rem .9rem; border-radius: 999px;
@@ -143,7 +137,6 @@ img, svg { display: block; }
 }
 .top-nav button[aria-current="page"] { background: var(--brand-50); color: var(--brand-800); }
 :root[data-theme="dark"] .top-nav button[aria-current="page"] { color: var(--brand-400); }
-.loc-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .top-actions { flex-shrink: 0; display: flex; align-items: center; gap: 6px; margin-inline-start: auto; }
 .icon-btn {
   width: 42px; height: 42px; border-radius: 50%; border: 0;
@@ -174,7 +167,6 @@ img, svg { display: block; }
   .hero-logo { padding: 4px; border-radius: 24px; margin-bottom: 14px; }
   .hero-logo img { width: 84px !important; height: 84px !important; border-radius: 20px !important; }
 }
-.hero-kicker { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 700; color: var(--brand-100); background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); padding: .3rem .75rem; border-radius: 999px; }
 .hero h1 { margin: 14px 0 6px; font-size: clamp(1.75rem, 5vw, 2.75rem); line-height: 1.15; font-weight: 800; letter-spacing: -.02em; max-width: 18ch; }
 .hero p { margin: 0 0 20px; color: rgba(255,255,255,.88); max-width: 46ch; font-size: 1rem; }
 .hero-count { margin-top: 14px; font-size: .85rem; color: rgba(255,255,255,.75); }

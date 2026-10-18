@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Accessibility, Check, Globe, MapPin, Moon, Sun, User } from "lucide-react";
+import { Accessibility, Check, Globe, Moon, Sun, User } from "lucide-react";
 import { STRINGS } from "../i18n";
 
 // A button with a small panel under it. Closes on outside click and Escape,
@@ -31,9 +31,6 @@ export function TopBar({ t, lang, setLang, theme, toggleTheme, a11y, setA11y, us
   return (
     <header className="topbar">
       <div className="container topbar-inner">
-        <button type="button" className="loc-pill" onClick={() => setTab("home")} aria-label={`AfulaGo — ${t.location}`}>
-          <MapPin size={15} aria-hidden="true" style={{ flexShrink: 0 }} /><span>{t.locationShort}</span>
-        </button>
         <nav className="top-nav" aria-label={t.tabHome}>
           {tabs.map(([id, label]) => (
             <button key={id} type="button" aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{label}</button>
