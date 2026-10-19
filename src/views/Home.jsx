@@ -1,9 +1,18 @@
 import { Search } from "lucide-react";
 import { HeroArt } from "../components/HeroArt";
-import { LogoMark } from "../components/Logo";
 import { PromoCarousel } from "../components/PromoCarousel";
 import { PlaceCard } from "../components/PlaceCard";
 import { CATEGORIES, COLLECTIONS } from "../data/places";
+
+// Decorative cluster beside the hero text on wide screens (x/y in %, s in px).
+const HERO_BUBBLES = [
+  { e: "🍕", x: "8%",  y: "6%",  s: "84px", d: "0s" },
+  { e: "☕", x: "50%", y: "0%",  s: "72px", d: "-1.5s" },
+  { e: "🌳", x: "74%", y: "26%", s: "92px", d: "-3s" },
+  { e: "🎬", x: "26%", y: "40%", s: "96px", d: "-4.5s" },
+  { e: "🍦", x: "58%", y: "62%", s: "76px", d: "-2s" },
+  { e: "🧺", x: "2%",  y: "70%", s: "70px", d: "-5s" },
+];
 
 function Rail({ title, places, onSeeAll, cardProps, t }) {
   if (!places.length) return null;
@@ -20,22 +29,25 @@ function Rail({ title, places, onSeeAll, cardProps, t }) {
   );
 }
 
-export function Home({ t, lang, places, onSearch, onCategory, goCity, openPlace, cardProps }) {
+export function Home({ t, lang, places, onSearch, onCategory, openPlace, cardProps }) {
   const byId = Object.fromEntries(places.map(p => [p.id, p]));
   const slides = [
-    { key: "centennial", emoji: "🎉", title: t.promoCentennial, sub: t.promoCentennialSub, bg: "linear-gradient(135deg,#075E54,#128C7E)", onClick: goCity },
     { key: "movieland", emoji: "🍿", title: t.promoMovie, sub: t.promoMovieSub, bg: "linear-gradient(135deg,#3B2B8F,#6A4CC2)", onClick: () => openPlace("movieland") },
     { key: "maayan-harod", emoji: "💧", title: t.promoSpring, sub: t.promoSpringSub, bg: "linear-gradient(135deg,#0E7490,#22A6C7)", onClick: () => openPlace("maayan-harod") },
     { key: "glitz", emoji: "🏊", title: t.promoGlitz, sub: t.promoGlitzSub, bg: "linear-gradient(135deg,#0F6BB0,#2E9BE0)", onClick: () => openPlace("glitz") },
     { key: "park-chai", emoji: "🦚", title: t.promoPark, sub: t.promoParkSub, bg: "linear-gradient(135deg,#2F7D32,#5DB761)", onClick: () => openPlace("park-chai") },
     { key: "old-market", emoji: "🌙", title: t.promoMarket, sub: t.promoMarketSub, bg: "linear-gradient(135deg,#7A3E1D,#C0682F)", onClick: () => openPlace("old-market") },
-  ].filter(s => s.key === "centennial" || byId[s.key]);
+  ].filter(s => byId[s.key]);
 
   return (
     <>
       <section className="hero" aria-labelledby="hero-title">
         <HeroArt />
-        <span className="hero-logo"><LogoMark size={92} /></span>
+        <div className="hero-bubbles" aria-hidden="true">
+          {HERO_BUBBLES.map(b => (
+            <span key={b.e} className="bubble emoji" style={{ "--x": b.x, "--y": b.y, "--s": b.s, "--d": b.d }}>{b.e}</span>
+          ))}
+        </div>
         <h1 id="hero-title">{t.heroTitle}</h1>
         <p>{t.heroSub}</p>
         <form className="search" role="search" onSubmit={e => { e.preventDefault(); onSearch(new FormData(e.currentTarget).get("q") || ""); }}>

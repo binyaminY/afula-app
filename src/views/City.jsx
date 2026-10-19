@@ -1,4 +1,4 @@
-import { BookOpen, Lightbulb, Map as MapIcon, Sparkles } from "lucide-react";
+import { BookOpen, Lightbulb, Map as MapIcon } from "lucide-react";
 import { HeroArt } from "../components/HeroArt";
 import { CITY } from "../data/city";
 
@@ -7,7 +7,6 @@ export function City({ t }) {
     <>
       <section className="hero" aria-labelledby="city-title">
         <HeroArt />
-        <span className="hero-kicker"><Sparkles size={14} aria-hidden="true" />{t.promoCentennial}</span>
         <h1 id="city-title">{t.aboutTitle}</h1>
         <p lang="he">{CITY.intro}</p>
       </section>

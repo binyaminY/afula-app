@@ -21,8 +21,6 @@ export function HeroArt() {
           <stop offset="1" stopColor="#053F38" />
         </linearGradient>
       </defs>
-      <circle cx="210" cy="196" r="64" fill="#FFD36B" opacity=".12" />
-      <circle cx="210" cy="196" r="40" fill="url(#hero-sun)" opacity=".9" />
       <path d="M0 210 C 140 150, 260 140, 400 190 S 640 120, 820 170 S 1080 140, 1200 175 V360 H0Z" fill="url(#hero-far)" />
       <path d="M0 250 C 180 200, 330 215, 520 245 S 860 190, 1010 225 S 1150 230, 1200 220 V360 H0Z" fill="url(#hero-mid)" />
       <path d="M0 300 C 220 268, 420 282, 640 300 S 1000 270, 1200 290 V360 H0Z" fill="url(#hero-near)" />

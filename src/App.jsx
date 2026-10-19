@@ -145,7 +145,7 @@ export default function App() {
       <main id="main" className="container" tabIndex={-1} style={{ outline: "none" }}>
         {tab === "home" && (
           <Home t={t} lang={lang} places={places} onSearch={(q) => goSearch(q)} onCategory={(c) => goSearch("", c)}
-            goCity={() => goTab("city")} openPlace={openPlace} cardProps={cardProps} />
+            openPlace={openPlace} cardProps={cardProps} />
         )}
         {tab === "search" && (
           <SearchView t={t} lang={lang} places={places} query={query} setQuery={setQuery} cat={cat} setCat={setCat}
